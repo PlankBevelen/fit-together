@@ -1,10 +1,44 @@
 /**app.wxss**/
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 200rpx 0;
+@primary: #3730A3;
+@secondary: #6366F1;
+@primaryBg: #EEF2FF;
+@success: #059669;
+@successBg: #ECFDF5;
+@warning: #D97706;
+@warningBg: #FFFBEB;
+@bg2: #F8F9FA;
+@bg3: #F1F3F5;
+@divider: #E5E7EB;
+@text: #111827;
+@text2: #6B7280;
+@text3: #9CA3AF;
+
+::-webkit-scrollbar {
+  display:none;
+  width:0;
+  height:0;
+  color:transparent;
+}
+
+.page {
+  min-height: 100vh;
   box-sizing: border-box;
-} 
+  background: #fff;
+  padding: 24rpx 24rpx 170rpx;
+}
+
+.card-1 {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid @divider;
+}
+
+.card-2 {
+  background: @bg2;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+

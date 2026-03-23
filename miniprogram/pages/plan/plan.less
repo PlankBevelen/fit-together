@@ -1,0 +1,649 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  padding-bottom: 18rpx;
+  border-bottom: 1px solid @divider;
+}
+
+.segment {
+  display: flex;
+  background: @bg3;
+  border-radius: 10px;
+  padding: 3px;
+  .segment-item {
+    flex: 1;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: @text2;
+  }
+  .segment-item.active {
+    background: #fff;
+    color: @primary;
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.content {
+  padding-top: 18rpx;
+}
+
+.picker-row {
+  display: flex;
+  margin-bottom: 16px;
+  .picker {
+    flex: 1;
+    background: @bg2;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .picker-label {
+      font-size: 11px;
+      color: @text2;
+      margin-bottom: 2px;
+    }
+    .picker-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: @text;
+    }
+    .picker-icon {
+      font-size: 14px;
+      color: @text3;
+    }
+  }
+  .picker + .picker {
+    margin-left: 10px;
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .legend-text {
+    font-size: 11px;
+    color: @text2;
+  }
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 12px;
+  .week-cell {
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+    border: 1px solid @divider;
+  }
+  .week-day {
+    font-size: 10px;
+    color: @text3;
+    margin-bottom: 3px;
+  }
+  .week-type {
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    line-height: 1.2;
+  }
+  .week-carbs {
+    font-size: 13px;
+    font-weight: 600;
+    color: @text;
+  }
+  .week-kcal {
+    font-size: 10px;
+    color: @text3;
+  }
+}
+
+.summary {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  .summary-item {
+    flex: 1;
+    text-align: center;
+  }
+  .summary-label {
+    font-size: 11px;
+    color: @text3;
+  }
+  .summary-value {
+    margin-top: 2px;
+    font-size: 13px;
+    font-weight: 600;
+    color: @text;
+  }
+}
+
+.collapse {
+  padding: 0;
+  overflow: hidden;
+  .collapse-head {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .collapse-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: @text;
+  }
+  .collapse-icon {
+    font-size: 16px;
+    color: @text3;
+  }
+  .collapse-body {
+    margin: 0 12px 12px;
+    background: @primaryBg;
+    border-radius: 8px;
+    border-left: 4px solid @primary;
+    padding: 10px 12px;
+  }
+  .collapse-text {
+    font-size: 13px;
+    color: @text2;
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+}
+
+.meal-root {
+  position: relative;
+  padding-bottom: 110px;
+}
+
+.meal-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .meal-info-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tag {
+    border: 1px solid @success;
+    border-radius: 9999px;
+    padding: 2px 10px;
+    background: @successBg;
+  }
+  .tag-text {
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .adopted {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .adopted-check {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .adopted-text {
+    font-size: 12px;
+  }
+  .meal-info-right {
+    font-size: 13px;
+    color: @text2;
+  }
+}
+
+.meal-card {
+  padding: 0;
+  overflow: hidden;
+  .meal-card-head {
+    padding: 12px 16px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .meal-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: @text;
+  }
+  .meal-card-add {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .meal-card-add-plus {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .meal-card-add-text {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .meal-item {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid @divider;
+  }
+  .meal-item-left {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
+  }
+  .meal-item-food {
+    font-size: 13px;
+    color: @text;
+    max-width: 220rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .meal-item-grams {
+    font-size: 12px;
+    color: @text3;
+  }
+  .meal-item-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .meal-item-kcal {
+    font-size: 13px;
+    color: @text2;
+  }
+  .meal-item-trash {
+    padding: 2px;
+  }
+  .meal-item-trash-icon {
+    font-size: 14px;
+    color: @text3;
+  }
+  .meal-card-foot {
+    padding: 8px 16px;
+    text-align: right;
+  }
+  .meal-card-total {
+    font-size: 12px;
+    color: @text2;
+  }
+}
+
+.ai-fab {
+  position: absolute;
+  right: 16px;
+  bottom: 70px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: @primaryBg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(55, 48, 163, 0.2);
+  .ai-fab-icon {
+    font-size: 22px;
+  }
+}
+
+.nutrition-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  background: #fff;
+  border-top: 1px solid @divider;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .nutrition-left {
+    display: flex;
+    gap: 16px;
+  }
+  .nutrition-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .nutrition-label {
+    font-size: 11px;
+    color: @text3;
+  }
+  .nutrition-value {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .nutrition-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .nutrition-total-label {
+    font-size: 11px;
+    color: @text3;
+  }
+  .nutrition-total {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .nutrition-unit {
+    font-size: 12px;
+    font-weight: 400;
+    color: @text3;
+    margin-left: 2px;
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+.overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.drawer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 72%;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.drawer-grabber {
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background: @divider;
+  align-self: center;
+  margin: 10px 0 4px;
+}
+
+.drawer-head {
+  padding: 8px 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .drawer-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: @text;
+  }
+  .drawer-refresh {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .drawer-refresh-icon {
+    font-size: 14px;
+  }
+  .drawer-refresh-text {
+    font-size: 13px;
+  }
+}
+
+.drawer-scroll {
+  flex: 1;
+  overflow: hidden;
+  padding: 0 16px;
+}
+
+.ai-summary {
+  background: @primaryBg;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  .ai-summary-hint {
+    font-size: 11px;
+    color: @text2;
+  }
+  .ai-summary-total {
+    margin-top: 2px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .ai-summary-right {
+    text-align: right;
+  }
+  .ai-summary-protein-label {
+    font-size: 11px;
+    color: @text2;
+  }
+  .ai-summary-protein {
+    font-size: 13px;
+    font-weight: 600;
+    color: @text;
+  }
+}
+
+.ai-section {
+  margin-bottom: 14px;
+  .ai-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: @text;
+    margin-bottom: 8px;
+  }
+}
+
+.ai-item {
+  padding: 8px 0;
+  border-bottom: 1px solid @divider;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .ai-item-food {
+    font-size: 13px;
+    color: @text;
+  }
+  .ai-item-grams {
+    font-size: 11px;
+    color: @text3;
+    margin-top: 1px;
+  }
+  .ai-item-kcal {
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+.drawer-foot {
+  padding: 12px 16px;
+  border-top: 1px solid @divider;
+  .drawer-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.week-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  .week-btn {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .week-btn-icon {
+    font-size: 14px;
+  }
+  .week-btn-text {
+    font-size: 13px;
+  }
+  .week-center {
+    text-align: center;
+  }
+  .week-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: @text;
+  }
+  .week-range {
+    font-size: 11px;
+    color: @text2;
+  }
+  .week-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .week-copy {
+    font-size: 13px;
+    color: @primary;
+  }
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.calendar-cell {
+  background: #fff;
+  border: 1px solid @divider;
+  border-radius: 10px;
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.calendar-day {
+  font-size: 11px;
+  color: @text3;
+  margin-bottom: 4px;
+}
+
+.calendar-pill {
+  border-radius: 9999px;
+  padding: 2px 4px;
+  margin-bottom: 6px;
+}
+
+.calendar-pill-text {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.calendar-plan {
+  font-size: 11px;
+  font-weight: 600;
+  color: @text3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.calendar-plan.has-plan {
+  color: @text;
+}
+
+.picker-head {
+  padding: 12px 16px;
+  border-bottom: 1px solid @divider;
+  .picker-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: @text;
+  }
+  .picker-sub {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .picker-badge {
+    border-radius: 9999px;
+    padding: 2px 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .picker-badge-text {
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .picker-target {
+    font-size: 12px;
+    color: @text2;
+  }
+}
+
+.plan-option {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid @divider;
+  .plan-option-left {
+    flex: 1;
+    min-width: 0;
+  }
+  .plan-option-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: @text;
+  }
+  .plan-option-sub {
+    font-size: 12px;
+    color: @text3;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .plan-option-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .plan-option-kcal {
+    font-size: 13px;
+    color: @text2;
+  }
+  .plan-option-check {
+    font-size: 16px;
+    font-weight: 700;
+  }
+}

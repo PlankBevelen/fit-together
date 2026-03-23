@@ -1,0 +1,140 @@
+<navigation-bar title="记录" back="{{true}}" color="#000" background="#FFF" />
+
+<scroll-view class="page" scroll-y="true" enhanced="true">
+  <view class="header">
+    <segment-control options="{{segments}}" value="{{segment}}" bind:change="onSegmentChange" />
+  </view>
+
+  <view class="content">
+    <view wx:if="{{toastMessage}}" class="toast {{toastType}}">
+      <text class="toast-icon">{{toastType === 'success' ? '✓' : '×'}}</text>
+      <text class="toast-text">{{toastMessage}}</text>
+    </view>
+
+    <view wx:if="{{segment === '打卡'}}">
+      <view class="status {{submitted ? 'success' : 'warning'}}">
+        <text class="status-icon">{{submitted ? '✓' : '!'}}</text>
+        <text class="status-text">
+          {{submitted ? ('今日已打卡 ✓ 体重 ' + weight + 'kg') : '今日未打卡，记录一下吧'}}
+        </text>
+      </view>
+
+      <view class="card-1 form">
+        <view class="field">
+          <view class="label">今日体重</view>
+          <view class="weight-row">
+            <input class="weight-input" type="digit" value="{{weight}}" bindinput="onWeightInput" />
+            <text class="unit">kg</text>
+          </view>
+          <view class="hint">上次 {{lastWeight}} kg</view>
+        </view>
+
+        <view class="divider" />
+
+        <view class="row">
+          <text class="row-title">今日饮食</text>
+          <view class="toggle" bindtap="onToggleFollowPlan">
+            <view class="checkbox {{followPlan ? 'checked' : ''}}">
+              <text wx:if="{{followPlan}}" class="checkmark">✓</text>
+            </view>
+            <text class="toggle-text {{followPlan ? 'checked' : ''}}">{{followPlan ? '按方案执行 ✓' : '按方案执行'}}</text>
+          </view>
+        </view>
+
+        <view class="more" bindtap="onToggleMore">
+          <text class="more-plus" style="color: {{colors.secondary}};">＋</text>
+          <text class="more-text" style="color: {{colors.secondary}};">记录更多</text>
+        </view>
+
+        <view wx:if="{{showMore}}" class="more-area">
+          <view class="field">
+            <view class="label">腰围（选填）</view>
+            <input class="input" type="digit" value="{{waist}}" placeholder="请输入腰围 cm" bindinput="onWaistInput" />
+          </view>
+
+          <view class="field">
+            <view class="label">感受备注（选填）</view>
+            <textarea class="textarea" value="{{note}}" placeholder="今天感觉怎么样？" auto-height="true" maxlength="200" bindinput="onNoteInput" />
+          </view>
+
+          <view class="field">
+            <view class="label-row">
+              <text class="label">照片（选填）</text>
+              <view class="photo-actions">
+                <view class="link" bindtap="onChooseImages">添加</view>
+                <view wx:if="{{images.length}}" class="link" bindtap="onSaveAllImages">全部保存</view>
+              </view>
+            </view>
+
+            <view wx:if="{{images.length}}" class="photo-grid">
+              <view wx:for="{{images}}" wx:key="path" class="photo-item">
+                <image class="photo" src="{{item.path}}" mode="aspectFill" data-path="{{item.path}}" bindtap="onPreviewImage" />
+                <view class="photo-bar">
+                  <view class="photo-btn" data-path="{{item.path}}" bindtap="onSaveImage">保存</view>
+                  <view class="photo-btn danger" data-path="{{item.path}}" bindtap="onRemoveImage">删除</view>
+                </view>
+              </view>
+            </view>
+            <view wx:else class="photo-empty">还没有照片</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="submit {{submitted ? 'success' : ''}}" bindtap="onSubmit">
+        <text class="submit-text">{{submitted ? '已打卡' : '提交打卡'}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{segment === '趋势'}}">
+      <view class="card-1">
+        <view class="card-title">体重趋势</view>
+        <view class="mini-list">
+          <view wx:for="{{weightTrend}}" wx:key="date" class="mini-row">
+            <text class="mini-date">{{item.date}}</text>
+            <text class="mini-value">{{item.weight}}kg</text>
+            <text class="mini-sub">目标 {{item.target}}kg</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="card-1">
+        <view class="card-title">蛋白质完成度（近7日）</view>
+        <view class="bars">
+          <view wx:for="{{proteinTrend}}" wx:key="date" class="bar-row">
+            <text class="bar-label">{{item.label}}</text>
+            <view class="bar-track">
+              <view class="bar-fill" style="width: {{item.rate}}%; background: {{item.rate >= 100 ? colors.success : '#4ADE80'}};"></view>
+            </view>
+            <text class="bar-value">{{item.rate}}%</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="card-1">
+        <view class="card-title">历史打卡记录</view>
+        <view class="mini-list">
+          <view wx:for="{{historyRecords}}" wx:key="date" class="history-row">
+            <view class="dot" style="background: {{item.achieved ? colors.success : colors.warning}};"></view>
+            <view class="history-main">
+              <view class="history-date">{{item.date}}</view>
+              <view class="history-summary">{{item.summary}}</view>
+            </view>
+            <view class="history-change {{item.change <= 0 ? 'down' : 'up'}}">
+              <text class="history-arrow">{{item.change <= 0 ? '↓' : '↑'}}</text>
+              <text class="history-num">{{item.change > 0 ? '+' : ''}}{{item.change}}kg</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="card-2 suggestion">
+        <view class="suggestion-title">本周建议</view>
+        <text class="suggestion-text">
+          本周体重下降 1.3kg，进展良好！蛋白质平均完成度达到 87%，建议高碳日可以适当增加训练强度。下周继续保持当前方案，重点关注腰围变化。
+        </text>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+
+<custom-tab-bar />

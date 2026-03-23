@@ -1,0 +1,448 @@
+.page {
+  background: #fff;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  padding: 10px 0 12px;
+  border-bottom: 1px solid @divider;
+}
+
+.content {
+  padding: 14px 16px;
+}
+
+.toast {
+  position: sticky;
+  top: 0;
+  margin-bottom: 12px;
+  align-self: center;
+  background: #1f2937;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.toast-icon {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.toast.success .toast-icon {
+  color: #4ade80;
+}
+
+.toast.error .toast-icon {
+  color: #f87171;
+}
+
+.toast-text {
+  font-size: 13px;
+}
+
+.status {
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.status-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.status.success {
+  background: @successBg;
+  border-color: rgba(5, 150, 105, 0.2);
+  .status-icon {
+    background: @success;
+  }
+  .status-text {
+    color: @success;
+    font-weight: 600;
+  }
+}
+
+.status.warning {
+  background: @warningBg;
+  border-color: rgba(217, 119, 6, 0.25);
+  .status-icon {
+    background: @warning;
+  }
+  .status-text {
+    color: @warning;
+  }
+}
+
+.form {
+  padding: 16px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.label {
+  font-size: 13px;
+  color: @text2;
+  margin-bottom: 8px;
+}
+
+.photo-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.link {
+  font-size: 13px;
+  color: @secondary;
+}
+
+.weight-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.weight-input {
+  font-size: 28px;
+  font-weight: 700;
+  color: @text;
+  background: @bg3;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 120px;
+  box-sizing: border-box;
+}
+
+.unit {
+  font-size: 16px;
+  color: @text2;
+}
+
+.hint {
+  font-size: 11px;
+  color: @text3;
+  margin-top: 4px;
+}
+
+.divider {
+  height: 1px;
+  background: @divider;
+  margin: 14px 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.row-title {
+  font-size: 14px;
+  color: @text;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid @divider;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.checkbox.checked {
+  background: @success;
+  border-color: @success;
+}
+
+.checkmark {
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.toggle-text {
+  font-size: 13px;
+  color: @text2;
+}
+
+.toggle-text.checked {
+  color: @success;
+}
+
+.more {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 0;
+}
+
+.more-plus {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.more-text {
+  font-size: 13px;
+}
+
+.more-area {
+  margin-top: 12px;
+}
+
+.input {
+  width: 100%;
+  height: 44px;
+  background: @bg3;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  color: @text;
+}
+
+.textarea {
+  width: 100%;
+  background: @bg3;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  color: @text;
+  min-height: 44px;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.photo-item {
+  background: #fff;
+  border: 1px solid @divider;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.photo {
+  width: 100%;
+  height: 92px;
+}
+
+.photo-bar {
+  display: flex;
+  border-top: 1px solid @divider;
+}
+
+.photo-btn {
+  flex: 1;
+  padding: 8px 0;
+  font-size: 12px;
+  color: @primary;
+  text-align: center;
+}
+
+.photo-btn.danger {
+  color: #dc2626;
+  border-left: 1px solid @divider;
+}
+
+.photo-empty {
+  font-size: 12px;
+  color: @text3;
+  padding: 10px 0;
+}
+
+.submit {
+  margin-top: 12px;
+  width: 100%;
+  height: 48px;
+  background: @primary;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit.success {
+  background: @success;
+}
+
+.submit-text {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: @text;
+  margin-bottom: 12px;
+}
+
+.mini-list {
+  .mini-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid @divider;
+  }
+  .mini-row:last-child {
+    border-bottom: 0;
+  }
+  .mini-date {
+    font-size: 12px;
+    color: @text2;
+    width: 40px;
+  }
+  .mini-value {
+    font-size: 13px;
+    color: @text;
+    font-weight: 600;
+  }
+  .mini-sub {
+    font-size: 12px;
+    color: @text3;
+  }
+}
+
+.bars {
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+  .bar-label {
+    font-size: 12px;
+    color: @text2;
+    width: 36px;
+  }
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: @bg3;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 9999px;
+  }
+  .bar-value {
+    font-size: 12px;
+    color: @text2;
+    width: 34px;
+    text-align: right;
+  }
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid @divider;
+}
+
+.history-row:last-child {
+  border-bottom: 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.history-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-date {
+  font-size: 12px;
+  color: @text2;
+  margin-bottom: 2px;
+}
+
+.history-summary {
+  font-size: 13px;
+  color: @text;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-change {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.history-change.down {
+  color: @success;
+}
+
+.history-change.up {
+  color: @warning;
+}
+
+.suggestion {
+  border-left: 4px solid @primary;
+}
+
+.suggestion-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: @text;
+  margin-bottom: 6px;
+}
+
+.suggestion-text {
+  font-size: 13px;
+  color: @text2;
+  line-height: 1.7;
+}
+

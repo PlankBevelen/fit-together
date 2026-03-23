@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "segment-control": "/components/segment-control/segment-control"
+  }
+}

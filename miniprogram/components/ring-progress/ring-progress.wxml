@@ -1,0 +1,8 @@
+<view class="root" style="width: {{size}}px; height: {{size}}px;">
+  <canvas canvas-id="ringProgress" class="canvas" style="width: {{size}}px; height: {{size}}px;"></canvas>
+  <view class="text">
+    <view class="main">{{ value }}</view>
+    <view class="sub">/ {{ total }} kcal</view>
+    <view class="label">{{ label }}</view>
+  </view>
+</view>

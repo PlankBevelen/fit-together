@@ -1,0 +1,252 @@
+<!--pages/plan.wxml-->
+<navigation-bar title="计划" back="{{false}}" color="#000" background="#FFF" />
+
+<scroll-view class="plan page" id="plan" scroll-y="true" enhanced="true">
+  <view class="header">
+    <segment-control options="{{segments}}" value="{{segment}}" bind:change="onSegmentChange" />
+  </view>
+
+  <view class="content">
+    <view wx:if="{{segment === '碳循环'}}">
+      <view class="picker-row">
+        <view
+          wx:for="{{pickers}}"
+          wx:key="label"
+          class="picker"
+          bindtap="onTapPicker"
+        >
+          <view class="picker-left">
+            <view class="picker-label">{{item.label}}</view>
+            <view class="picker-value">{{item.value}}</view>
+          </view>
+          <text class="picker-icon">▾</text>
+        </view>
+      </view>
+
+      <view class="legend">
+        <view wx:for="{{carbonLegend}}" wx:key="key" class="legend-item">
+          <view class="legend-dot" style="background: {{item.color}};"></view>
+          <text class="legend-text">{{item.label}}</text>
+        </view>
+      </view>
+
+      <view class="week-grid">
+        <view
+          wx:for="{{weekDays}}"
+          wx:key="day"
+          class="week-cell"
+          style="background: {{item.info.bg}}; box-shadow: {{item.isToday ? ('0 0 0 2px ' + item.info.color) : 'none'}};"
+        >
+          <view class="week-day">{{item.day}}</view>
+          <view class="week-type" style="color: {{item.info.color}};">{{item.info.shortLabel}}</view>
+          <view class="week-carbs">{{item.info.carbs}}</view>
+          <view class="week-kcal">{{item.info.kcalShort}}</view>
+        </view>
+      </view>
+
+      <view class="summary card-2">
+        <view wx:for="{{summaryStats}}" wx:key="label" class="summary-item">
+          <view class="summary-label">{{item.label}}</view>
+          <view class="summary-value">{{item.value}}</view>
+        </view>
+      </view>
+
+      <view wx:for="{{collapsibleCards}}" wx:key="key" class="collapse card-1">
+        <view class="collapse-head" data-key="{{item.key}}" bindtap="onToggleCard">
+          <view class="collapse-title">{{item.title}}</view>
+          <text class="collapse-icon">{{openCardKey === item.key ? '▾' : '›'}}</text>
+        </view>
+        <view wx:if="{{openCardKey === item.key}}" class="collapse-body">
+          <text class="collapse-text">{{item.content}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{segment === '方案搭配'}}" class="meal-root">
+      <view class="meal-info card-2">
+        <view class="meal-info-left">
+          <view class="tag" style="border-color: {{colors.success}};">
+            <text class="tag-text" style="color: {{colors.success}};">高碳日</text>
+          </view>
+          <view wx:if="{{adopted}}" class="adopted">
+            <text class="adopted-check" style="color: {{colors.success}};">✓</text>
+            <text class="adopted-text" style="color: {{colors.success}};">已采用 AI 方案</text>
+          </view>
+        </view>
+        <text class="meal-info-right">目标 2480kcal</text>
+      </view>
+
+      <view wx:for="{{mealCards}}" wx:key="section" wx:for-item="card" class="meal-card card-1">
+        <view class="meal-card-head">
+          <view class="meal-card-title">{{card.section}}</view>
+          <view class="meal-card-add" bindtap="onTapAddMealItem" data-section="{{card.section}}">
+            <text class="meal-card-add-plus" style="color: {{colors.primary}};">＋</text>
+            <text class="meal-card-add-text" style="color: {{colors.primary}};">添加</text>
+          </view>
+        </view>
+
+        <view wx:for="{{card.items}}" wx:key="food" wx:for-item="food" class="meal-item">
+          <view class="meal-item-left">
+            <text class="meal-item-food">{{food.food}}</text>
+            <text class="meal-item-grams">{{food.grams}}</text>
+          </view>
+          <view class="meal-item-right">
+            <text class="meal-item-kcal">{{food.kcal}}</text>
+            <view
+              class="meal-item-trash"
+              bindtap="onRemoveMealItem"
+              data-section="{{card.section}}"
+              data-index="{{index}}"
+            >
+              <text class="meal-item-trash-icon">🗑</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="meal-card-foot">
+          <text class="meal-card-total">小计 {{card.totalKcal}} kcal</text>
+        </view>
+      </view>
+
+      <view class="ai-fab" bindtap="onOpenAIDrawer">
+        <text class="ai-fab-icon" style="color: {{colors.primary}};">✨</text>
+      </view>
+
+      <view class="nutrition-bar">
+        <view class="nutrition-left">
+          <view wx:for="{{nutritionSummary}}" wx:key="label" class="nutrition-item">
+            <view class="nutrition-label">{{item.label}}</view>
+            <view class="nutrition-value" style="color: {{item.color}};">{{item.value}}</view>
+          </view>
+        </view>
+        <view class="nutrition-right">
+          <view class="nutrition-total-label">总热量</view>
+          <view class="nutrition-total" style="color: {{mealTotalKcal >= 2400 ? colors.success : colors.secondary}};">
+            {{mealTotalKcal}}
+            <text class="nutrition-unit">kcal</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{segment === '日历排餐'}}">
+      <view class="week-nav">
+        <view class="week-btn" bindtap="onPrevWeek">
+          <text class="week-btn-icon" style="color: {{colors.primary}};">‹</text>
+          <text class="week-btn-text" style="color: {{colors.primary}};">上周</text>
+        </view>
+
+        <view class="week-center">
+          <view class="week-title">{{calendarWeekTitle}}</view>
+          <view class="week-range">{{calendarWeekRange}}</view>
+        </view>
+
+        <view class="week-right">
+          <view class="week-copy" bindtap="onCopyPrevWeek">复制上周</view>
+          <view class="week-btn" bindtap="onNextWeek">
+            <text class="week-btn-text" style="color: {{colors.primary}};">下周</text>
+            <text class="week-btn-icon" style="color: {{colors.primary}};">›</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="calendar-grid">
+        <view
+          wx:for="{{calendarDays}}"
+          wx:key="day"
+          class="calendar-cell"
+          bindtap="onOpenPlanPicker"
+          data-day="{{item.day}}"
+          data-type="{{item.type}}"
+          style="box-shadow: {{item.isToday ? ('0 0 0 2px ' + item.info.color) : 'none'}};"
+        >
+          <view class="calendar-day">{{item.day}}</view>
+          <view class="calendar-pill" style="background: {{item.info.bg}};">
+            <text class="calendar-pill-text" style="color: {{item.info.color}};">{{item.info.shortLabel}}</text>
+          </view>
+          <view class="calendar-plan {{item.plan ? 'has-plan' : ''}}">{{item.plan || '—'}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showAIDrawer}}" class="overlay">
+    <view class="overlay-backdrop" catchtap="onCloseAIDrawer"></view>
+    <view class="drawer" catchtap="noop">
+      <view class="drawer-grabber"></view>
+      <view class="drawer-head">
+        <view class="drawer-title">AI 为你生成的方案</view>
+        <view class="drawer-refresh" bindtap="onRegenerateAI">
+          <text class="drawer-refresh-icon" style="color: {{colors.primary}};">⟳</text>
+          <text class="drawer-refresh-text" style="color: {{colors.primary}};">重新生成</text>
+        </view>
+      </view>
+
+      <scroll-view class="drawer-scroll" scroll-y="true" enhanced="true">
+        <view class="ai-summary">
+          <view class="ai-summary-left">
+            <view class="ai-summary-hint">{{aiSummary.hint}}</view>
+            <view class="ai-summary-total" style="color: {{colors.primary}};">总热量 {{aiSummary.totalKcal}} kcal</view>
+          </view>
+          <view class="ai-summary-right">
+            <view class="ai-summary-protein-label">蛋白质</view>
+            <view class="ai-summary-protein">{{aiSummary.protein}}</view>
+          </view>
+        </view>
+
+        <view wx:for="{{aiItems}}" wx:key="meal" wx:for-item="section" class="ai-section">
+          <view class="ai-section-title">{{section.meal}}</view>
+          <view wx:for="{{section.items}}" wx:key="food" wx:for-item="food" class="ai-item">
+            <view class="ai-item-left">
+              <view class="ai-item-food">{{food.food}}</view>
+              <view class="ai-item-grams">{{food.grams}}</view>
+            </view>
+            <view class="ai-item-kcal" style="color: {{colors.secondary}};">{{food.kcal}}</view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="drawer-foot">
+        <view class="drawer-btn" bindtap="onAdoptAIPlan" style="background: {{colors.primary}};">
+          采用此方案
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showPlanPicker}}" class="overlay">
+    <view class="overlay-backdrop" catchtap="onClosePlanPicker"></view>
+    <view class="drawer" catchtap="noop">
+      <view class="drawer-grabber"></view>
+      <view class="picker-head">
+        <view class="picker-title">选择{{pickerDay}}方案</view>
+        <view class="picker-sub">
+          <view class="picker-badge" style="background: {{pickerInfo.bg}};">
+            <text class="picker-badge-text" style="color: {{pickerInfo.color}};">{{pickerInfo.label}}</text>
+          </view>
+          <text class="picker-target">目标 {{pickerInfo.kcal}}</text>
+        </view>
+      </view>
+      <scroll-view class="drawer-scroll" scroll-y="true" enhanced="true">
+        <view
+          wx:for="{{planOptions}}"
+          wx:key="*this"
+          class="plan-option"
+          data-plan="{{item}}"
+          bindtap="onSelectPlan"
+        >
+          <view class="plan-option-left">
+            <view class="plan-option-name">{{item}}</view>
+            <view class="plan-option-sub">蛋白质 158g · 碳水 260g · 脂肪 50g</view>
+          </view>
+          <view class="plan-option-right">
+            <text class="plan-option-kcal">2420kcal</text>
+            <text wx:if="{{pickerSelectedPlan === item}}" class="plan-option-check" style="color: {{colors.success}};">✓</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</scroll-view>
+
+<custom-tab-bar />

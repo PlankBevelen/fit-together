@@ -1,54 +1,106 @@
-// index.ts
-// 获取应用实例
-const app = getApp<IAppOption>()
-const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
+import Formatter from "../../utils/Formatter"
 
 Component({
   data: {
-    motto: 'Hello World',
-    userInfo: {
-      avatarUrl: defaultAvatarUrl,
-      nickName: '',
-    },
-    hasUserInfo: false,
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
+    today: Formatter.getTodayDate() + " " + Formatter.getTodayDayOfWeek(),
+    planLabel: '高碳日',
+    planValue: '280g',
+
+    ringSize: 160,
+    ringStrokeWidth: 12,
+    consumedKcal: 1840,
+    targetKcal: 2480,
+    burnedKcal: 320,
+    remainingKcal: 0,
+    completionPercent: 0,
+
+    macros: [
+      { key: 'protein', name: '蛋白质', current: 128, target: 160, unit: 'g', color: '#22C55E', percent: 0 },
+      { key: 'carb', name: '碳水', current: 245, target: 280, unit: 'g', color: '#4F46E5', percent: 0 },
+      { key: 'fat', name: '脂肪', current: 48, target: 70, unit: 'g', color: '#F97316', percent: 0 }
+    ],
+
+    mealPlanTitle: '今日餐次方案',
+    mealPlanStatus: '已选',
+    mealPlanMeals: '早餐 · 午餐 · 晚餐 · 加餐',
+
+    quickActions: [
+      { key: 'checkin', title: '立即打卡' },
+      { key: 'ai', title: 'AI 建议' },
+      { key: 'friends', title: '好友动态' }
+    ],
+
+    activityTitle: '好友动态',
+    activityMore: '全部',
+    activities: [
+      { id: '1', name: '小雨', initial: '小', action: '完成了今日打卡 · 高碳日', time: '10分钟前' },
+      { id: '2', name: '阿强', initial: '阿', action: '完成了今日打卡 · 中碳日', time: '32分钟前' },
+      { id: '3', name: '建国', initial: '建', action: '更新了本周训练计划', time: '1小时前' }
+    ]
   },
+
+  lifetimes: {
+    ready() {
+      this.syncDerivedData();
+    }
+  },
+
+  pageLifetimes: {
+    show() {
+      this.setData({ today: Formatter.getTodayDate() + " " + Formatter.getTodayDayOfWeek() }, () => {
+        this.syncDerivedData();
+      });
+    }
+  },
+
   methods: {
-    // 事件处理函数
-    bindViewTap() {
-      wx.navigateTo({
-        url: '../logs/logs',
-      })
+    syncDerivedData(done?: () => void) {
+      const completionPercent = this.getCompletionPercent();
+      const remainingKcal = this.getRemainingKcal();
+      const macros = this.data.macros.map(item => ({
+        ...item,
+        percent: this.getMacroPercent(item.current, item.target)
+      }));
+
+      this.setData({ completionPercent, remainingKcal, macros }, done);
     },
-    onChooseAvatar(e: any) {
-      const { avatarUrl } = e.detail
-      const { nickName } = this.data.userInfo
-      this.setData({
-        "userInfo.avatarUrl": avatarUrl,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-      })
+
+    clampPercent(value: number) {
+      if (Number.isNaN(value)) return 0;
+      if (value < 0) return 0;
+      if (value > 100) return 100;
+      return value;
     },
-    onInputChange(e: any) {
-      const nickName = e.detail.value
-      const { avatarUrl } = this.data.userInfo
-      this.setData({
-        "userInfo.nickName": nickName,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-      })
+
+    getCompletionPercent() {
+      const target = this.data.targetKcal || 0;
+      if (target <= 0) return 0;
+      return this.clampPercent(Math.round((this.data.consumedKcal / target) * 100));
     },
-    getUserProfile() {
-      // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认，开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-      wx.getUserProfile({
-        desc: '展示用户信息', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-        success: (res) => {
-          console.log(res)
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
+
+    getRemainingKcal() {
+      const remaining = (this.data.targetKcal || 0) - (this.data.consumedKcal || 0);
+      return remaining < 0 ? 0 : remaining;
     },
-  },
+
+    getMacroPercent(current: number, target: number) {
+      if (!target || target <= 0) return 0;
+      return this.clampPercent(Math.round((current / target) * 100));
+    },
+
+    onTapMealPlan() {
+      wx.showToast({ title: '敬请期待', icon: 'none' });
+    },
+
+    onTapQuickAction(event: any) {
+      const key = String(event.currentTarget.dataset.key || '');
+      if (!key) return;
+      if (key === 'checkin') {
+        wx.navigateTo({ url: '/pages/record/record' });
+        return;
+      }
+      wx.showToast({ title: '敬请期待', icon: 'none' });
+    },
+
+  }
 })

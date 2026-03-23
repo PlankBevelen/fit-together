@@ -1,0 +1,19 @@
+<view class="root" aria-role="tablist">
+  <view
+    wx:if="{{count > 0}}"
+    class="slider"
+    style="{{sliderStyle}}"
+  />
+  <view
+    wx:for="{{options}}"
+    wx:key="*this"
+    class="item {{activeIndex === index ? 'active' : ''}}"
+    data-index="{{index}}"
+    data-value="{{item}}"
+    bindtap="onTapItem"
+    aria-role="tab"
+    aria-selected="{{activeIndex === index}}"
+  >
+    {{item}}
+  </view>
+</view>

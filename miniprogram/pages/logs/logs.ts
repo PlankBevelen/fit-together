@@ -1,6 +1,6 @@
 // logs.ts
 // const util = require('../../utils/util.js')
-import { formatTime } from '../../utils/util'
+import Formatter from '../../utils/Formatter'
 
 Component({
   data: {
@@ -11,7 +11,7 @@ Component({
       this.setData({
         logs: (wx.getStorageSync('logs') || []).map((log: string) => {
           return {
-            date: formatTime(new Date(log)),
+            date: Formatter.formatTime(new Date(log)),
             timeStamp: log
           }
         }),
