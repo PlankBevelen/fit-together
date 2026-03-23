@@ -1,4 +1,4 @@
-<navigation-bar title="记录" back="{{true}}" color="#000" background="#FFF" />
+<navigation-bar title="记录" back="{{false}}" color="#111827" background="#FFF" />
 
 <scroll-view class="page" scroll-y="true" enhanced="true">
   <view class="header">

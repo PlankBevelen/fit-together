@@ -3,6 +3,11 @@
   padding: 18px 0;
   border-top: 1px solid #E5E7EB;
   background-color: #FFFFFF;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   .tab-bar-container {
     flex: 1;
     display: flex;
@@ -18,6 +23,13 @@
       font-weight: 500;
       font-size: 13px;
       gap: 4px;
+    }
+    .tab-bar-icon {
+      width: 24px;
+      height: 24px;
+    }
+    .tab-bar-text {
+      line-height: 1;
     }
   }
 }

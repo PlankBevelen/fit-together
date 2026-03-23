@@ -4,9 +4,30 @@ Component({
     color: "#6B7280",
     selectedColor: "#3730A3",
     list: [
-      { pagePath: '/pages/index/index', text: '首页' },
-      { pagePath: '/pages/plan/plan', text: '计划' },
-      { pagePath: '/pages/record/record', text: '记录' },
+      {
+        pagePath: '/pages/index/index',
+        text: '首页',
+        iconPath: '/static/icon/tab/home.svg',
+        selectedIconPath: '/static/icon/tab/selected_home.svg',
+      },
+      {
+        pagePath: '/pages/plan/plan',
+        text: '计划',
+        iconPath: '/static/icon/tab/plan.svg',
+        selectedIconPath: '/static/icon/tab/selected_plan.svg',
+      },
+      {
+        pagePath: '/pages/record/record',
+        text: '记录',
+        iconPath: '/static/icon/tab/record.svg',
+        selectedIconPath: '/static/icon/tab/selected_record.svg',
+      },
+      {
+        pagePath: '/pages/profile/profile',
+        text: '我的',
+        iconPath: '/static/icon/tab/profile.svg',
+        selectedIconPath: '/static/icon/tab/selected_profile.svg',
+      },
     ],    
   },
 
@@ -95,10 +116,16 @@ Component({
       if (currentRoute === nextRoute) return;
 
       (this as any).__pendingRoute = nextRoute;
+      const prevSelected = this.data.selected;
       this.setData({ selected: index });
 
       wx.switchTab({
         url: path.startsWith('/') ? path : `/${path}`,
+        fail: () => {
+          (this as any).__pendingRoute = undefined;
+          this.setData({ selected: prevSelected });
+          wx.showToast({ title: '切换失败，请重新编译', icon: 'none' });
+        },
         complete: () => this.queueSyncSelected()
       });
     },

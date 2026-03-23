@@ -1,0 +1,90 @@
+<navigation-bar title="我的" back="{{false}}" color="#111827" background="#fff" />
+
+<scroll-view class="profile page" scroll-y="true" enhanced="true">
+  <view class="profile-header">
+    <view class="user-row">
+      <view class="avatar-wrap">
+        <image class="avatar" src="{{user.avatarUrl}}" mode="aspectFill" />
+        <view class="online-dot">
+          <text class="online-check">✓</text>
+        </view>
+      </view>
+
+      <view class="user-info">
+        <view class="user-name">{{user.name}}</view>
+        <view class="user-sub">
+          训练第 <text class="user-sub-strong">{{user.trainingDays}}</text> 天
+        </view>
+      </view>
+
+      <view class="stats-row">
+        <view class="stat-card">
+          <view class="stat-value">{{stats.bmi}}</view>
+          <view class="stat-label">BMI</view>
+        </view>
+        <view class="stat-card">
+          <view class="stat-value">{{stats.weekCheckins}}</view>
+          <view class="stat-label">本周打卡</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="progress-row">
+      <view wx:for="{{progressStats}}" wx:key="label" class="progress-cell">
+        <view class="progress-value" style="color: {{item.color}};">{{item.value}}</view>
+        <view class="progress-label">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">本周打卡</view>
+    <view class="week-card">
+      <view wx:for="{{weekDays}}" wx:key="day" class="week-item">
+        <view
+          class="week-dot"
+          style="background: {{item.done ? (item.isToday ? colors.primary : colors.success) : colors.bg2}}; border: {{item.isToday ? ('2px solid ' + colors.primary) : 'none'}};"
+        >
+          <text class="week-dot-text" style="color: {{ item.done ? '#FFFFFF' : colors.text3 }};">
+            {{item.done ? '✓' : '—'}}
+          </text>
+        </view>
+        <text class="week-label" style="color: {{ item.isToday ? colors.primary : colors.text3 }};">周{{item.day}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="menu-card">
+      <view
+        wx:for="{{menuItems}}"
+        wx:key="id"
+        class="menu-item {{index < menuItems.length - 1 ? 'menu-item-border' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onTapMenuItem"
+      >
+        <view class="menu-icon" style="background: {{item.iconBg}};">
+          <text class="menu-icon-text" style="color: {{item.iconColor}};">{{item.iconText}}</text>
+        </view>
+
+        <view class="menu-text">
+          <view class="menu-title">{{item.title}}</view>
+          <view class="menu-subtitle">{{item.subtitle}}</view>
+        </view>
+
+        <view class="menu-right">
+          <view wx:if="{{item.badge}}" class="menu-badge">
+            <text class="menu-badge-text">{{item.badge}}</text>
+          </view>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section logout-section">
+    <button class="logout-btn" bindtap="onTapLogout">退出登录</button>
+  </view>
+</scroll-view>
+
+<custom-tab-bar />

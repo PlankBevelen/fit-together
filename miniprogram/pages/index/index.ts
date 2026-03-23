@@ -96,7 +96,7 @@ Component({
       const key = String(event.currentTarget.dataset.key || '');
       if (!key) return;
       if (key === 'checkin') {
-        wx.navigateTo({ url: '/pages/record/record' });
+        wx.switchTab({ url: '/pages/record/record' });
         return;
       }
       wx.showToast({ title: '敬请期待', icon: 'none' });

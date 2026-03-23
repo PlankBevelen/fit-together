@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/logs/logs",
     "pages/plan/plan",
-    "pages/record/record"
+    "pages/record/record",
+    "pages/profile/profile"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -23,6 +24,10 @@
       {
         "pagePath": "pages/record/record",
         "text": "记录"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
       }
     ]
   },

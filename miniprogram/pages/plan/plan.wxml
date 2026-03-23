@@ -1,5 +1,5 @@
 <!--pages/plan.wxml-->
-<navigation-bar title="计划" back="{{false}}" color="#000" background="#FFF" />
+<navigation-bar title="计划" back="{{false}}" color="#111827" background="#FFF" />
 
 <scroll-view class="plan page" id="plan" scroll-y="true" enhanced="true">
   <view class="header">
