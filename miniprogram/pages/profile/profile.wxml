@@ -5,7 +5,7 @@
     <view class="user-row">
       <view class="avatar-wrap">
         <image class="avatar" src="{{user.avatarUrl}}" mode="aspectFill" />
-        <view class="online-dot">
+        <view wx:if="{{profileComplete}}" class="online-dot">
           <text class="online-check">✓</text>
         </view>
       </view>
@@ -34,6 +34,23 @@
         <view class="progress-value" style="color: {{item.color}};">{{item.value}}</view>
         <view class="progress-label">{{item.label}}</view>
       </view>
+    </view>
+
+    <view wx:if="{{showLoginPrompt}}" class="login-card">
+      <view class="login-title">登录后同步数据</view>
+      <view class="login-sub">跨设备备份 · 解锁训练小队/情侣模式</view>
+      <view class="login-actions">
+        <view class="login-btn primary" bindtap="onTapLogin">去登录</view>
+        <view class="login-btn" bindtap="onTapSkipLogin">先逛逛</view>
+      </view>
+    </view>
+
+    <view wx:if="{{!profileComplete}}" class="profile-tip">
+      <view class="profile-tip-left">
+        <view class="profile-tip-title">完善资料，解锁更精准推荐</view>
+        <view class="profile-tip-sub">{{auth.isLoggedIn ? '保存到账号，随时同步' : '未登录也可先填写，登录后可同步'}}</view>
+      </view>
+      <view class="profile-tip-btn" bindtap="onTapStartProfile">去填写</view>
     </view>
   </view>
 
@@ -82,8 +99,60 @@
     </view>
   </view>
 
-  <view class="section logout-section">
+  <view wx:if="{{auth.isLoggedIn}}" class="section logout-section">
     <button class="logout-btn" bindtap="onTapLogout">退出登录</button>
+  </view>
+
+  <view wx:if="{{showProfileForm}}" class="overlay">
+    <view class="overlay-backdrop" catchtap="onCloseProfileForm"></view>
+    <view class="drawer" catchtap="noop">
+      <view class="drawer-grabber"></view>
+      <view class="form-head">
+        <view class="form-title">完善资料</view>
+        <view class="form-desc">{{auth.isLoggedIn ? '将保存到账号' : '将保存到本地草稿'}}</view>
+      </view>
+
+      <view class="form-body">
+        <view class="form-field">
+          <view class="form-label">身高</view>
+          <view class="form-input-row">
+            <input class="form-input" type="digit" value="{{form.heightCm}}" data-field="heightCm" bindinput="onFormInput" placeholder="例如 175" />
+            <text class="form-unit">cm</text>
+          </view>
+        </view>
+
+        <view class="form-field">
+          <view class="form-label">当前体重</view>
+          <view class="form-input-row">
+            <input class="form-input" type="digit" value="{{form.weightKg}}" data-field="weightKg" bindinput="onFormInput" placeholder="例如 71.0" />
+            <text class="form-unit">kg</text>
+          </view>
+        </view>
+
+        <view class="form-field">
+          <view class="form-label">目标体重</view>
+          <view class="form-input-row">
+            <input class="form-input" type="digit" value="{{form.targetWeightKg}}" data-field="targetWeightKg" bindinput="onFormInput" placeholder="例如 68.0" />
+            <text class="form-unit">kg</text>
+          </view>
+        </view>
+
+        <view class="form-field">
+          <view class="form-label">目标</view>
+          <picker mode="selector" range="{{goalOptions}}" value="{{form.goalIndex}}" bindchange="onGoalChange">
+            <view class="picker-box">
+              <text class="picker-text">{{goalOptions[form.goalIndex]}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="form-actions">
+        <view class="form-btn primary" bindtap="onTapSaveProfile">保存</view>
+        <view class="form-btn ghost" bindtap="onCloseProfileForm">先不填</view>
+      </view>
+    </view>
   </view>
 </scroll-view>
 

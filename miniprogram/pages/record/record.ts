@@ -1,3 +1,12 @@
+import {
+  dismissLoginPrompt,
+  dismissProfilePrompt,
+  getAuthState,
+  getProfileState,
+  isLoginPromptDismissed,
+  isProfilePromptDismissed,
+} from "../../utils/UserState";
+
 type RecordImage = { path: string };
 
 type StoredCheckin = {
@@ -299,6 +308,41 @@ Page({
 
     this.setData({ submitted: true, lastWeight: String(this.data.weight || this.data.lastWeight) });
     this.showToast("打卡成功 · 继续保持！", "success");
+
+    const auth = getAuthState();
+    const profileState = getProfileState(auth.isLoggedIn);
+
+    if (!auth.isLoggedIn && !isLoginPromptDismissed()) {
+      wx.showModal({
+        title: "建议登录",
+        content: "登录后可同步数据，换手机也不丢记录。",
+        confirmText: "去登录",
+        cancelText: "先逛逛",
+        success: (res) => {
+          if (res.confirm) {
+            wx.switchTab({ url: "/pages/profile/profile" });
+            return;
+          }
+          dismissLoginPrompt();
+        },
+      });
+      return;
+    }
+
+    if (auth.isLoggedIn && !profileState.isComplete && !isProfilePromptDismissed()) {
+      wx.showModal({
+        title: "完善资料更准确",
+        content: "补齐身高/目标体重后，可自动计算 BMI 与减重进度。",
+        confirmText: "去填写",
+        cancelText: "以后再说",
+        success: (res) => {
+          if (res.confirm) {
+            wx.switchTab({ url: "/pages/profile/profile" });
+            return;
+          }
+          dismissProfilePrompt();
+        },
+      });
+    }
   },
 });
-

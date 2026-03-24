@@ -261,3 +261,229 @@
 .logout-btn::after {
   border: none;
 }
+
+.login-card {
+  margin-top: 14px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.login-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: @text;
+}
+
+.login-sub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: @text2;
+}
+
+.login-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.login-btn {
+  flex: 1;
+  height: 36px;
+  border-radius: 10px;
+  background: @bg2;
+  color: @text;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-btn.primary {
+  background: @primary;
+  color: #fff;
+}
+
+.profile-tip {
+  margin-top: 12px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.profile-tip-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-tip-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: @text;
+}
+
+.profile-tip-sub {
+  margin-top: 3px;
+  font-size: 11px;
+  color: @text2;
+}
+
+.profile-tip-btn {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: @primary;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+.overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.drawer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 70%;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.drawer-grabber {
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background: @divider;
+  align-self: center;
+  margin: 10px 0 6px;
+}
+
+.form-head {
+  padding: 8px 16px 12px;
+}
+
+.form-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: @text;
+}
+
+.form-desc {
+  margin-top: 4px;
+  font-size: 12px;
+  color: @text2;
+}
+
+.form-body {
+  flex: 1;
+  padding: 0 16px;
+  overflow: hidden;
+}
+
+.form-field {
+  padding: 12px 0;
+  border-bottom: 1px solid @divider;
+}
+
+.form-label {
+  font-size: 12px;
+  color: @text2;
+  margin-bottom: 8px;
+}
+
+.form-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-input {
+  flex: 1;
+  height: 36px;
+  border-radius: 10px;
+  background: @bg2;
+  padding: 0 12px;
+  font-size: 14px;
+  color: @text;
+}
+
+.form-unit {
+  font-size: 12px;
+  color: @text3;
+  flex-shrink: 0;
+}
+
+.picker-box {
+  height: 36px;
+  border-radius: 10px;
+  background: @bg2;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.picker-text {
+  font-size: 14px;
+  color: @text;
+  font-weight: 600;
+}
+
+.picker-arrow {
+  font-size: 16px;
+  color: @text3;
+}
+
+.form-actions {
+  padding: 12px 16px;
+  border-top: 1px solid @divider;
+  display: flex;
+  gap: 10px;
+}
+
+.form-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-btn.primary {
+  background: @primary;
+  color: #fff;
+}
+
+.form-btn.ghost {
+  background: #fff;
+  border: 1px solid @divider;
+  color: @text2;
+}
