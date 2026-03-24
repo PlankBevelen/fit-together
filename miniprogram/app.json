@@ -4,7 +4,10 @@
     "pages/logs/logs",
     "pages/plan/plan",
     "pages/record/record",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/login/login",
+    "pages/settings/index",
+    "pages/profile-edit/profile-edit"
   ],
   "window": {
     "navigationBarTextStyle": "black",

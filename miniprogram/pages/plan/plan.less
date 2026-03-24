@@ -611,6 +611,133 @@
   }
 }
 
+.calendar-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 16px;
+  .calendar-tab {
+    font-size: 14px;
+    color: @text2;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+  }
+  .calendar-tab.active {
+    color: @primary;
+    font-weight: 600;
+    border-bottom: 2px solid @primary;
+  }
+}
+
+.calendar-swiper {
+  height: 500px;
+}
+
+.plan-tag {
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-size: 11px;
+  margin-top: 4px;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.plan-tag.dragging {
+  opacity: 0.5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+.month-grid {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.month-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 12px;
+  color: @text3;
+  margin-bottom: 8px;
+}
+
+.month-body {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 48px);
+  gap: 2px;
+}
+
+.month-cell {
+  border-top: 1px solid @divider;
+  padding: 4px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.month-day {
+  font-size: 14px;
+  font-family: sans-serif;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.month-plan {
+  margin-top: 2px;
+  width: 100%;
+  text-align: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.lottie-mock {
+  width: 120px;
+  height: 120px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23EEF2FF"/><text x="50" y="55" font-size="30" text-anchor="middle" fill="%233730A3">✨</text></svg>') no-repeat center;
+  background-size: contain;
+  margin-bottom: 16px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.empty-text {
+  font-size: 14px;
+  color: @text2;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.empty-btn {
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background: @primary;
+  color: #fff;
+}
+
 .plan-option {
   padding: 12px 16px;
   display: flex;

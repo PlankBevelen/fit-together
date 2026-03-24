@@ -1,3 +1,5 @@
+import { getAuthState } from "../../utils/UserState"
+
 type CarbonType = "high" | "mid" | "low" | "rest";
 
 type CarbonInfo = {
@@ -141,8 +143,30 @@ function getWeekRange(weekOffset: number) {
   return "3/23–3/29";
 }
 
+function buildMonthDays() {
+  const days = [];
+  for (let i = 0; i < 42; i++) {
+    const isToday = i === 15;
+    days.push({
+      day: (i % 30) + 1,
+      isToday,
+      plan: isToday ? "高碳增肌" : (i % 5 === 0 ? "低脂减脂" : ""),
+      info: carbonInfo.high
+    });
+  }
+  return days;
+}
+
+const emptyMeals: Meals = {
+  早餐: { name: "早餐", items: [] },
+  午餐: { name: "午餐", items: [] },
+  晚餐: { name: "晚餐", items: [] },
+  加餐: { name: "加餐", items: [] },
+};
+
 Page({
   data: {
+    auth: { isLoggedIn: false },
     colors: COLORS,
 
     segments: ["碳循环", "方案搭配", "日历排餐"],
@@ -235,6 +259,9 @@ Page({
     } as Record<string, string>,
     calendarDays: [] as Array<WeekDay & { plan: string }>,
 
+    calendarView: "week",
+    calendarMonthDays: buildMonthDays(),
+
     showPlanPicker: false,
     pickerDay: "",
     pickerType: "high" as CarbonType,
@@ -244,6 +271,84 @@ Page({
   },
 
   onLoad() {
+    this.syncAuthState();
+  },
+
+  onShow() {
+    this.syncAuthState();
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 1 });
+    }
+  },
+
+  syncAuthState() {
+    const auth = getAuthState();
+    if (!auth.isLoggedIn) {
+      this.setData({
+        auth,
+        summaryStats: [
+          { label: "周平均", value: "0kcal" },
+          { label: "热量赤字", value: "0kcal" },
+          { label: "周总碳水", value: "0g" },
+        ],
+        meals: emptyMeals,
+        nutritionSummary: [
+          { label: "蛋白质", value: "0g", color: "#4ADE80" },
+          { label: "碳水", value: "0g", color: COLORS.secondary },
+          { label: "脂肪", value: "0g", color: "#FB923C" },
+        ],
+        calendarPlans: {} as Record<string, string>,
+        aiItems: []
+      });
+    } else {
+      this.setData({
+        auth,
+        summaryStats: [
+          { label: "周平均", value: "2085kcal" },
+          { label: "热量赤字", value: "-2240kcal" },
+          { label: "周总碳水", value: "1630g" },
+        ],
+        meals: mealPlansInit,
+        nutritionSummary: [
+          { label: "蛋白质", value: "162g", color: "#4ADE80" },
+          { label: "碳水", value: "268g", color: COLORS.secondary },
+          { label: "脂肪", value: "52g", color: "#FB923C" },
+        ],
+        calendarPlans: {
+          周一: "增肌方案A",
+          周三: "高碳增肌",
+          周五: "增肌方案A",
+          周日: "高碳周末版",
+        },
+        aiItems: [
+          {
+            meal: "早餐",
+            items: [
+              { food: "燕麦粥", grams: "80g", kcal: "290kcal" },
+              { food: "水煮蛋", grams: "60g", kcal: "86kcal" },
+              { food: "蓝莓", grams: "100g", kcal: "57kcal" },
+            ],
+          },
+          {
+            meal: "午餐",
+            items: [
+              { food: "糙米饭", grams: "180g", kcal: "209kcal" },
+              { food: "鸡胸肉", grams: "150g", kcal: "159kcal" },
+              { food: "胡萝卜炒菜", grams: "120g", kcal: "58kcal" },
+            ],
+          },
+          {
+            meal: "晚餐",
+            items: [
+              { food: "红薯", grams: "150g", kcal: "129kcal" },
+              { food: "牛里脊", grams: "100g", kcal: "107kcal" },
+              { food: "蒸西兰花", grams: "150g", kcal: "51kcal" },
+            ],
+          },
+        ]
+      });
+    }
+
     const mealDerived = buildMealCards(this.data.meals, this.data.mealSections);
     const calendarDays = buildCalendarDays(this.data.calendarPlans);
     this.setData({ mealCards: mealDerived.cards, mealTotalKcal: mealDerived.totalKcal, calendarDays });
@@ -323,6 +428,18 @@ Page({
       calendarWeekTitle: getWeekTitle(nextOffset),
       calendarWeekRange: getWeekRange(nextOffset),
     });
+  },
+
+  onChangeCalendarView(event: any) {
+    const view = String(event.currentTarget.dataset.view || "");
+    if (view === "week" || view === "month") {
+      this.setData({ calendarView: view });
+    }
+  },
+
+  onSwiperChange(event: any) {
+    const current = event.detail.current;
+    this.setData({ calendarView: current === 0 ? "week" : "month" });
   },
 
   onCopyPrevWeek() {

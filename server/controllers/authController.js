@@ -21,20 +21,17 @@ exports.wxLogin = async (req, res, next) => {
   
   // Note: For dev environment without real appid/secret, you might want to mock this
   let openid;
+  let session_key = 'mock_session_key';
   
-  if (process.env.WX_APP_ID === 'your_wx_app_id') {
-    // Mock openid for development
-    openid = `mock_openid_${code}`;
-  } else {
-    try {
-      const response = await axios.get(wxUrl);
-      if (response.data.errcode) {
-        return next(new AppError(response.data.errmsg, 400));
-      }
-      openid = response.data.openid;
-    } catch (error) {
-      return next(new AppError('Failed to verify with WeChat server', 500));
+  try {
+    const response = await axios.get(wxUrl);
+    if (response.data.errcode) {
+      return next(new AppError(response.data.errmsg, 400));
     }
+    openid = response.data.openid;
+    session_key = response.data.session_key;
+  } catch (error) {
+    return next(new AppError('Failed to verify with WeChat server', 500));
   }
 
   // 2) Find or create user
@@ -50,6 +47,8 @@ exports.wxLogin = async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     token,
+    openid,
+    session_key,
     data: {
       user,
     },

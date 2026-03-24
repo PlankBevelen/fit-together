@@ -1,13 +1,3 @@
-type MenuItem = {
-  id: string;
-  iconText: string;
-  iconColor: string;
-  iconBg: string;
-  title: string;
-  subtitle: string;
-  badge?: number | null;
-};
-
 type WeekDayItem = {
   day: string;
   done: boolean;
@@ -15,13 +5,10 @@ type WeekDayItem = {
 };
 
 import {
-  clearToken,
   dismissLoginPrompt,
   getAuthState,
   getProfileState,
   isLoginPromptDismissed,
-  saveProfile,
-  type GoalType,
   type ProfileDraft,
 } from "../../utils/UserState";
 
@@ -43,68 +30,11 @@ const PROFILE_COLORS = {
   text3: "#9CA3AF",
 };
 
-const menuItems: MenuItem[] = [
-  {
-    id: "body",
-    iconText: "体",
-    iconColor: PROFILE_COLORS.primary,
-    iconBg: PROFILE_COLORS.primaryBg,
-    title: "体测档案",
-    subtitle: "身高体重目标等基础数据",
-    badge: null,
-  },
-  {
-    id: "squad",
-    iconText: "队",
-    iconColor: PROFILE_COLORS.success,
-    iconBg: PROFILE_COLORS.successBg,
-    title: "训练小队",
-    subtitle: "精英燃脂队 · 5 人",
-    badge: 2,
-  },
-  {
-    id: "couple",
-    iconText: "❤",
-    iconColor: PROFILE_COLORS.danger,
-    iconBg: PROFILE_COLORS.dangerBg,
-    title: "情侣模式",
-    subtitle: "已绑定 · 连续 28 天",
-    badge: null,
-  },
-  {
-    id: "notify",
-    iconText: "铃",
-    iconColor: PROFILE_COLORS.text2,
-    iconBg: PROFILE_COLORS.bg2,
-    title: "通知设置",
-    subtitle: "打卡提醒、好友动态",
-    badge: null,
-  },
-  {
-    id: "privacy",
-    iconText: "锁",
-    iconColor: PROFILE_COLORS.text2,
-    iconBg: PROFILE_COLORS.bg2,
-    title: "隐私设置",
-    subtitle: "数据可见性管理",
-    badge: null,
-  },
-  {
-    id: "about",
-    iconText: "i",
-    iconColor: PROFILE_COLORS.text2,
-    iconBg: PROFILE_COLORS.bg2,
-    title: "关于 / 反馈",
-    subtitle: "版本 1.2.0 · 意见反馈",
-    badge: null,
-  },
-];
-
-function buildProfileWeekDays(): WeekDayItem[] {
+function buildProfileWeekDays(isLoggedIn: boolean): WeekDayItem[] {
   const days = ["一", "二", "三", "四", "五", "六", "日"];
   return days.map((day, i) => {
     const isToday = i === 6;
-    const done = i < 5 || isToday;
+    const done = isLoggedIn ? (i < 5 || isToday) : false;
     return { day, done, isToday };
   });
 }
@@ -120,25 +50,6 @@ function computeBMI(heightCm?: string, weightKg?: string) {
   if (!Number.isFinite(h) || !Number.isFinite(w) || h <= 0 || w <= 0) return undefined;
   const meters = h / 100;
   return w / (meters * meters);
-}
-
-function goalLabel(goal?: GoalType) {
-  if (goal === "cut") return "减脂";
-  if (goal === "bulk") return "增肌";
-  if (goal === "maintain") return "维持";
-  return "";
-}
-
-function goalFromIndex(index: number): GoalType {
-  if (index === 1) return "bulk";
-  if (index === 2) return "maintain";
-  return "cut";
-}
-
-function goalIndex(goal?: GoalType) {
-  if (goal === "bulk") return 1;
-  if (goal === "maintain") return 2;
-  return 0;
 }
 
 function buildProgressStats(profile?: ProfileDraft) {
@@ -169,7 +80,6 @@ Page({
     },
     profileComplete: false,
     showLoginPrompt: false,
-    showProfileForm: false,
 
     user: {
       name: "游客",
@@ -185,16 +95,8 @@ Page({
 
     progressStats: buildProgressStats(),
 
-    weekDays: buildProfileWeekDays(),
-    menuItems,
-
-    form: {
-      heightCm: "",
-      weightKg: "",
-      targetWeightKg: "",
-      goalIndex: 0,
-    },
-    goalOptions: ["减脂", "增肌", "维持"],
+    weekDays: buildProfileWeekDays(false),
+    showLoginSheet: false,
   },
 
   onLoad() {
@@ -219,31 +121,37 @@ Page({
       showLoginPrompt,
       user: {
         name: profile?.name || (auth.isLoggedIn ? "已登录用户" : "游客"),
-        trainingDays: 0,
+        trainingDays: auth.isLoggedIn ? 28 : 0,
         avatarUrl:
           profile?.avatarUrl ||
           "https://images.unsplash.com/photo-1575992877113-6a7dda2d1592?w=200&h=200&fit=crop",
       },
       stats: {
         bmi,
-        weekCheckins: 0,
+        weekCheckins: auth.isLoggedIn ? 6 : 0,
       },
       progressStats: buildProgressStats(profile),
-      form: {
-        heightCm: profile?.heightCm || "",
-        weightKg: profile?.weightKg || "",
-        targetWeightKg: profile?.targetWeightKg || "",
-        goalIndex: goalIndex(profile?.goal),
-      },
+      weekDays: buildProfileWeekDays(auth.isLoggedIn),
     });
   },
 
-  openProfileForm() {
-    this.setData({ showProfileForm: true });
-  },
 
   onTapLogin() {
-    wx.showToast({ title: "登录流程待接入", icon: "none" });
+    this.setData({ showLoginSheet: false });
+    wx.navigateTo({ url: "/pages/login/login" });
+  },
+
+  onTapRegister() {
+    this.setData({ showLoginSheet: false });
+    wx.navigateTo({ url: "/pages/login/login" });
+  },
+
+  onTapUserHeader() {
+    if (this.data.auth.isLoggedIn) {
+      wx.navigateTo({ url: "/pages/profile-edit/profile-edit" });
+    } else {
+      wx.navigateTo({ url: "/pages/login/login" });
+    }
   },
 
   onTapSkipLogin() {
@@ -251,88 +159,44 @@ Page({
     this.setData({ showLoginPrompt: false });
   },
 
+  onRecallLoginPrompt() {
+    this.setData({ showLoginPrompt: true });
+  },
+
+  onCloseLoginSheet() {
+    this.setData({ showLoginSheet: false });
+  },
+
   onTapStartProfile() {
-    this.openProfileForm();
+    wx.navigateTo({ url: "/pages/profile-edit/profile-edit" });
   },
 
-  onCloseProfileForm() {
-    this.setData({ showProfileForm: false });
+  onTapProfile() {
+    wx.navigateTo({ url: "/pages/profile-edit/profile-edit" });
   },
 
-  onFormInput(event: any) {
-    const field = String(event.currentTarget.dataset.field || "");
-    const value = String(event.detail.value || "");
-    if (field !== "heightCm" && field !== "weightKg" && field !== "targetWeightKg") return;
-    this.setData({ [`form.${field}`]: value });
-  },
-
-  onGoalChange(event: any) {
-    const index = Number(event.detail.value);
-    if (Number.isNaN(index) || index < 0) return;
-    this.setData({ "form.goalIndex": index });
-  },
-
-  onTapSaveProfile() {
-    const form = this.data.form as { heightCm: string; weightKg: string; targetWeightKg: string; goalIndex: number };
-    const heightCm = String(form.heightCm || "").trim();
-    const weightKg = String(form.weightKg || "").trim();
-    const targetWeightKg = String(form.targetWeightKg || "").trim();
-    const goal = goalFromIndex(Number(form.goalIndex));
-
-    if (!heightCm || !weightKg || !targetWeightKg) {
-      wx.showToast({ title: "请填写身高/体重/目标体重", icon: "none" });
+  onTapCouple() {
+    if (!this.data.auth.isLoggedIn) {
+      this.setData({ showLoginSheet: true });
       return;
     }
-
-    saveProfile({ heightCm, weightKg, targetWeightKg, goal }, this.data.auth.isLoggedIn);
-    this.setData({ showProfileForm: false });
-    this.syncUserState();
-
-    wx.showToast({ title: `已保存（${goalLabel(goal)}）`, icon: "none" });
+    wx.showToast({ title: "情侣模式：敬请期待", icon: "none" });
   },
 
-  onTapMenuItem(event: any) {
-    const id = String(event.currentTarget.dataset.id || "");
-    if (!id) return;
-
-    if ((id === "squad" || id === "couple") && !this.data.auth.isLoggedIn) {
-      wx.showModal({
-        title: "建议登录",
-        content: "登录后可同步数据，并解锁训练小队/情侣模式等功能。",
-        confirmText: "去登录",
-        cancelText: "先逛逛",
-        success: (res) => {
-          if (res.confirm) {
-            this.onTapLogin();
-            return;
-          }
-          this.onTapSkipLogin();
-        },
-      });
+  onTapSquad() {
+    if (!this.data.auth.isLoggedIn) {
+      this.setData({ showLoginSheet: true });
       return;
     }
-
-    if (id === "body") {
-      this.openProfileForm();
-      return;
-    }
-
-    const titleMap: Record<string, string> = {
-      body: "体测档案",
-      squad: "训练小队",
-      couple: "情侣模式",
-      notify: "通知设置",
-      privacy: "隐私设置",
-      about: "关于 / 反馈",
-    };
-
-    wx.showToast({ title: titleMap[id] ? `${titleMap[id]}：敬请期待` : "敬请期待", icon: "none" });
+    wx.showToast({ title: "训练小队：敬请期待", icon: "none" });
   },
 
-  onTapLogout() {
-    clearToken();
-    this.syncUserState();
-    wx.showToast({ title: "已退出登录", icon: "none" });
+  onTapFeedback() {
+    wx.showToast({ title: "意见反馈：敬请期待", icon: "none" });
+  },
+
+  onTapSettings() {
+    wx.navigateTo({ url: "/pages/settings/index" });
   },
 
   noop() {},

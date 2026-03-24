@@ -10,6 +10,7 @@ router.post('/wx-login', authController.wxLogin);
 router.use(protect);
 
 router.get('/profile', authController.getProfile);
+router.put('/profile', authController.updateProfile);
 router.patch('/profile', authController.updateProfile);
 
 module.exports = router;

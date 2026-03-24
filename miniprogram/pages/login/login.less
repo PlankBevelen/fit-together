@@ -1,0 +1,76 @@
+@import "../../app.less";
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  padding-top: 100rpx;
+}
+
+.login-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 120rpx;
+}
+
+.logo-image {
+  width: 160rpx;
+  height: 160rpx;
+  background-color: @primaryBg;
+  border-radius: 40rpx;
+  margin-bottom: 32rpx;
+}
+
+.logo-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: @text;
+  margin-bottom: 16rpx;
+}
+
+.logo-subtitle {
+  font-size: 28rpx;
+  color: @text3;
+}
+
+.action-area {
+  width: 100%;
+  padding: 0 60rpx;
+  box-sizing: border-box;
+}
+
+.btn-wechat {
+  width: 100%;
+  height: 96rpx;
+  background-color: #07C160;
+  color: #fff;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  margin-bottom: 32rpx;
+}
+
+.btn-wechat::after {
+  border: none;
+}
+
+.cancel-text {
+  text-align: center;
+  font-size: 28rpx;
+  color: @text2;
+  padding: 20rpx;
+}

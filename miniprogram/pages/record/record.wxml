@@ -94,6 +94,9 @@
             <text class="mini-value">{{item.weight}}kg</text>
             <text class="mini-sub">目标 {{item.target}}kg</text>
           </view>
+          <view wx:if="{{weightTrend.length === 0}}" class="empty-hint" style="text-align: center; color: #9CA3AF; font-size: 13px; padding: 12px 0;">
+            {{auth.isLoggedIn ? '暂无体重数据' : '登录后查看体重趋势'}}
+          </view>
         </view>
       </view>
 
@@ -106,6 +109,9 @@
               <view class="bar-fill" style="width: {{item.rate}}%; background: {{item.rate >= 100 ? colors.success : '#4ADE80'}};"></view>
             </view>
             <text class="bar-value">{{item.rate}}%</text>
+          </view>
+          <view wx:if="{{proteinTrend.length === 0}}" class="empty-hint" style="text-align: center; color: #9CA3AF; font-size: 13px; padding: 12px 0;">
+            {{auth.isLoggedIn ? '暂无蛋白质数据' : '登录后查看完成度'}}
           </view>
         </view>
       </view>
@@ -124,10 +130,13 @@
               <text class="history-num">{{item.change > 0 ? '+' : ''}}{{item.change}}kg</text>
             </view>
           </view>
+          <view wx:if="{{historyRecords.length === 0}}" class="empty-hint" style="text-align: center; color: #9CA3AF; font-size: 13px; padding: 12px 0;">
+            {{auth.isLoggedIn ? '暂无打卡记录' : '登录后同步历史记录'}}
+          </view>
         </view>
       </view>
 
-      <view class="card-2 suggestion">
+      <view class="card-2 suggestion" wx:if="{{auth.isLoggedIn && historyRecords.length > 0}}">
         <view class="suggestion-title">本周建议</view>
         <text class="suggestion-text">
           本周体重下降 1.3kg，进展良好！蛋白质平均完成度达到 87%，建议高碳日可以适当增加训练强度。下周继续保持当前方案，重点关注腰围变化。

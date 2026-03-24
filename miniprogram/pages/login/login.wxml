@@ -1,0 +1,16 @@
+<navigation-bar title="Fit Togther" back="{{true}}" color="#111827" background="#fff" />
+<view class="page login-page">
+  <view class="login-container">
+    <view class="logo-area">
+      <image class="logo-image" src="/static/logo.png" mode="aspectFit" />
+      <view class="logo-title">Fit Together</view>
+      <view class="logo-subtitle">随时随地，同步你的训练数据</view>
+    </view>
+    <view class="action-area">
+      <button class="btn-wechat" bindtap="handleWxLogin">
+        微信授权登录
+      </button>
+      <view class="cancel-text" bindtap="handleCancel">暂不登录</view>
+    </view>
+  </view>
+</view>

@@ -84,6 +84,9 @@
         </view>
         <text class="activity-time">{{ item.time }}</text>
       </view>
+      <view wx:if="{{activities.length === 0}}" class="activity-empty" style="text-align: center; color: #9CA3AF; font-size: 13px; padding: 20px 0;">
+        {{auth.isLoggedIn ? '暂无好友动态' : '登录后查看好友动态'}}
+      </view>
     </view>
   </view>
 </scroll-view>

@@ -97,6 +97,7 @@ function ensureAlbumPermission(): Promise<void> {
 
 Page({
   data: {
+    auth: { isLoggedIn: false },
     colors: {
       primary: "#3730A3",
       secondary: "#6366F1",
@@ -108,8 +109,8 @@ Page({
     segment: "打卡",
 
     submitted: false,
-    lastWeight: "71.2",
-    weight: "71.0",
+    lastWeight: "",
+    weight: "",
     followPlan: true,
     showMore: false,
     waist: "",
@@ -120,33 +121,64 @@ Page({
     toastMessage: "",
     toastType: "success" as "success" | "error",
 
-    weightTrend: [
-      { date: "3/18", weight: 71.2, target: 70.0 },
-      { date: "3/19", weight: 71.3, target: 69.8 },
-      { date: "3/20", weight: 71.0, target: 69.6 },
-      { date: "3/21", weight: 71.2, target: 69.4 },
-    ],
-    proteinTrend: [
-      { date: "3/16", rate: 85, label: "周一" },
-      { date: "3/17", rate: 92, label: "周二" },
-      { date: "3/18", rate: 78, label: "周三" },
-      { date: "3/19", rate: 100, label: "周四" },
-      { date: "3/20", rate: 95, label: "周五" },
-      { date: "3/21", rate: 88, label: "周六" },
-      { date: "3/22", rate: 72, label: "今日" },
-    ],
-    historyRecords: [
-      { date: "3/21 周六", summary: "体重 71.2kg · 蛋白质 142g", change: -0.2, achieved: true },
-      { date: "3/20 周五", summary: "体重 71.4kg · 蛋白质 138g", change: -0.4, achieved: true },
-      { date: "3/19 周四", summary: "体重 71.8kg · 蛋白质 155g", change: +0.1, achieved: false },
-      { date: "3/18 周三", summary: "体重 71.7kg · 蛋白质 128g", change: -0.2, achieved: true },
-      { date: "3/17 周二", summary: "体重 71.9kg · 蛋白质 133g", change: -0.6, achieved: true },
-    ],
+    weightTrend: [] as any[],
+    proteinTrend: [] as any[],
+    historyRecords: [] as any[],
   },
 
   onLoad() {
     const images = this.loadImages();
     this.setData({ images });
+    this.syncAuthState();
+  },
+
+  onShow() {
+    this.syncAuthState();
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 2 });
+    }
+  },
+
+  syncAuthState() {
+    const auth = getAuthState();
+    if (!auth.isLoggedIn) {
+      this.setData({
+        auth,
+        lastWeight: "--",
+        weight: "",
+        weightTrend: [],
+        proteinTrend: [],
+        historyRecords: []
+      });
+    } else {
+      this.setData({
+        auth,
+        lastWeight: "71.2",
+        weight: "71.0",
+        weightTrend: [
+          { date: "3/18", weight: 71.2, target: 70.0 },
+          { date: "3/19", weight: 71.3, target: 69.8 },
+          { date: "3/20", weight: 71.0, target: 69.6 },
+          { date: "3/21", weight: 71.2, target: 69.4 },
+        ],
+        proteinTrend: [
+          { date: "3/16", rate: 85, label: "周一" },
+          { date: "3/17", rate: 92, label: "周二" },
+          { date: "3/18", rate: 78, label: "周三" },
+          { date: "3/19", rate: 100, label: "周四" },
+          { date: "3/20", rate: 95, label: "周五" },
+          { date: "3/21", rate: 88, label: "周六" },
+          { date: "3/22", rate: 72, label: "今日" },
+        ],
+        historyRecords: [
+          { date: "3/21 周六", summary: "体重 71.2kg · 蛋白质 142g", change: -0.2, achieved: true },
+          { date: "3/20 周五", summary: "体重 71.4kg · 蛋白质 138g", change: -0.4, achieved: true },
+          { date: "3/19 周四", summary: "体重 71.8kg · 蛋白质 155g", change: +0.1, achieved: false },
+          { date: "3/18 周三", summary: "体重 71.7kg · 蛋白质 128g", change: -0.2, achieved: true },
+          { date: "3/17 周二", summary: "体重 71.9kg · 蛋白质 133g", change: -0.6, achieved: true },
+        ]
+      });
+    }
   },
 
   loadImages() {

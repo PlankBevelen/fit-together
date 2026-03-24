@@ -102,6 +102,9 @@
             </view>
           </view>
         </view>
+        <view wx:if="{{card.items.length === 0}}" class="meal-item-empty" style="text-align: center; color: #9CA3AF; font-size: 13px; padding: 12px 0;">
+          {{auth.isLoggedIn ? '暂无饮食安排' : '登录后生成个性化排餐'}}
+        </view>
 
         <view class="meal-card-foot">
           <text class="meal-card-total">小计 {{card.totalKcal}} kcal</text>
@@ -130,43 +133,78 @@
     </view>
 
     <view wx:if="{{segment === '日历排餐'}}">
-      <view class="week-nav">
-        <view class="week-btn" bindtap="onPrevWeek">
-          <text class="week-btn-icon" style="color: {{colors.primary}};">‹</text>
-          <text class="week-btn-text" style="color: {{colors.primary}};">上周</text>
-        </view>
-
-        <view class="week-center">
-          <view class="week-title">{{calendarWeekTitle}}</view>
-          <view class="week-range">{{calendarWeekRange}}</view>
-        </view>
-
-        <view class="week-right">
-          <view class="week-copy" bindtap="onCopyPrevWeek">复制上周</view>
-          <view class="week-btn" bindtap="onNextWeek">
-            <text class="week-btn-text" style="color: {{colors.primary}};">下周</text>
-            <text class="week-btn-icon" style="color: {{colors.primary}};">›</text>
-          </view>
-        </view>
+      <view class="calendar-tabs">
+        <view class="calendar-tab {{calendarView === 'week' ? 'active' : ''}}" bindtap="onChangeCalendarView" data-view="week">周视图</view>
+        <view class="calendar-tab {{calendarView === 'month' ? 'active' : ''}}" bindtap="onChangeCalendarView" data-view="month">月视图</view>
       </view>
 
-      <view class="calendar-grid">
-        <view
-          wx:for="{{calendarDays}}"
-          wx:key="day"
-          class="calendar-cell"
-          bindtap="onOpenPlanPicker"
-          data-day="{{item.day}}"
-          data-type="{{item.type}}"
-          style="box-shadow: {{item.isToday ? ('0 0 0 2px ' + item.info.color) : 'none'}};"
-        >
-          <view class="calendar-day">{{item.day}}</view>
-          <view class="calendar-pill" style="background: {{item.info.bg}};">
-            <text class="calendar-pill-text" style="color: {{item.info.color}};">{{item.info.shortLabel}}</text>
+      <swiper class="calendar-swiper" current="{{calendarView === 'week' ? 0 : 1}}" bindchange="onSwiperChange">
+        <swiper-item>
+          <view class="week-nav">
+            <view class="week-btn" bindtap="onPrevWeek">
+              <text class="week-btn-icon" style="color: {{colors.primary}};">‹</text>
+              <text class="week-btn-text" style="color: {{colors.primary}};">上周</text>
+            </view>
+
+            <view class="week-center">
+              <view class="week-title">{{calendarWeekTitle}}</view>
+              <view class="week-range">{{calendarWeekRange}}</view>
+            </view>
+
+            <view class="week-right">
+              <view class="week-copy" bindtap="onCopyPrevWeek">复制上周</view>
+              <view class="week-btn" bindtap="onNextWeek">
+                <text class="week-btn-text" style="color: {{colors.primary}};">下周</text>
+                <text class="week-btn-icon" style="color: {{colors.primary}};">›</text>
+              </view>
+            </view>
           </view>
-          <view class="calendar-plan {{item.plan ? 'has-plan' : ''}}">{{item.plan || '—'}}</view>
-        </view>
-      </view>
+
+          <view wx:if="{{auth.isLoggedIn}}" class="calendar-grid">
+            <view
+              wx:for="{{calendarDays}}"
+              wx:key="day"
+              class="calendar-cell"
+              bindtap="onOpenPlanPicker"
+              data-day="{{item.day}}"
+              data-type="{{item.type}}"
+              style="box-shadow: {{item.isToday ? ('0 0 0 2px ' + item.info.color) : 'none'}};"
+            >
+              <view class="calendar-day">{{item.day}}</view>
+              <view class="calendar-pill" style="background: {{item.info.bg}};">
+                <text class="calendar-pill-text" style="color: {{item.info.color}};">{{item.info.shortLabel}}</text>
+              </view>
+              <view class="calendar-plan plan-tag {{item.plan ? 'has-plan' : ''}}">{{item.plan || '—'}}</view>
+            </view>
+          </view>
+          <view wx:else class="empty-state">
+            <!-- Mocking Lottie Animation Canvas -->
+            <view class="lottie-mock"></view>
+            <view class="empty-text">开启专属你的科学饮食计划</view>
+            <view class="empty-btn primary">立即创建</view>
+          </view>
+        </swiper-item>
+
+        <swiper-item>
+          <view class="month-grid">
+            <view class="month-header">
+              <text>一</text><text>二</text><text>三</text><text>四</text><text>五</text><text>六</text><text>日</text>
+            </view>
+            <view class="month-body">
+              <view
+                wx:for="{{calendarMonthDays}}"
+                wx:key="index"
+                class="month-cell"
+              >
+                <view class="month-day {{item.isToday ? 'today' : ''}}" style="background: {{item.isToday ? colors.primary : 'transparent'}}; color: {{item.isToday ? '#fff' : '#111827'}};">{{item.day}}</view>
+                <view wx:if="{{item.plan}}" class="month-plan plan-tag" style="background: {{item.info.bg}}; color: {{item.info.color}};">
+                  {{item.plan}}
+                </view>
+              </view>
+            </view>
+          </view>
+        </swiper-item>
+      </swiper>
     </view>
   </view>
 

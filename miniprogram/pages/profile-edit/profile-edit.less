@@ -1,0 +1,104 @@
+.form-body {
+  background: #fff;
+  padding: 0 16px;
+  border-radius: 12px;
+  margin: 0 16px;
+}
+
+.form-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 0.5px solid @divider;
+}
+
+.form-field:last-child {
+  border-bottom: none;
+}
+
+.form-label {
+  font-size: 15px;
+  color: @text;
+  font-weight: 500;
+  flex-shrink: 0;
+  width: 80px;
+}
+
+.avatar-wrapper {
+  padding: 0;
+  margin: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.avatar-wrapper::after {
+  border: none;
+}
+
+.form-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid @divider;
+  background-size: cover;
+}
+
+.form-input-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 15px;
+  color: @text;
+  text-align: right;
+}
+
+.picker-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.picker-text {
+  font-size: 15px;
+  color: @text;
+}
+
+.picker-arrow {
+  font-size: 16px;
+  color: @text3;
+}
+
+.form-actions {
+  margin: 40px 16px;
+}
+
+.form-btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-btn.primary {
+  background: @primary;
+  color: #fff;
+}
+
+.form-btn::after {
+  border: none;
+}

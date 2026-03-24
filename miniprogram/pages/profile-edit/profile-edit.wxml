@@ -1,0 +1,50 @@
+<navigation-bar title="个人资料" back="{{true}}" color="#111827" background="#fff" />
+
+<view class="profile-edit page">
+  <view class="form-body">
+    <view class="form-field">
+      <view class="form-label">头像</view>
+      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="form-avatar" src="{{form.avatarUrl || 'https://images.unsplash.com/photo-1575992877113-6a7dda2d1592?w=200&h=200&fit=crop'}}" />
+      </button>
+    </view>
+
+    <view class="form-field">
+      <view class="form-label">昵称</view>
+      <view class="form-input-row">
+        <input class="form-input" type="nickname" value="{{form.name}}" data-field="name" bindinput="onFormInput" bindblur="onFormInput" placeholder="请输入昵称" />
+      </view>
+    </view>
+
+    <view class="form-field">
+      <view class="form-label">性别</view>
+      <picker mode="selector" range="{{genderOptions}}" value="{{form.genderIndex}}" bindchange="onGenderChange">
+        <view class="picker-box">
+          <text class="picker-text">{{genderOptions[form.genderIndex]}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-field">
+      <view class="form-label">生日</view>
+      <picker mode="date" value="{{form.birthday}}" bindchange="onBirthdayChange">
+        <view class="picker-box">
+          <text class="picker-text">{{form.birthday || '请选择生日'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-field">
+      <view class="form-label">简介</view>
+      <view class="form-input-row">
+        <input class="form-input" type="text" value="{{form.bio}}" data-field="bio" bindinput="onFormInput" placeholder="介绍一下你自己吧" />
+      </view>
+    </view>
+  </view>
+
+  <view class="form-actions">
+    <button class="form-btn primary" bindtap="onTapSave">保存</button>
+  </view>
+</view>

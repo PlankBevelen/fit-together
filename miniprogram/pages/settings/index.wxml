@@ -1,0 +1,18 @@
+<navigation-bar title="设置" back="{{true}}" color="#111827" background="#fff" />
+
+<scroll-view class="settings page" scroll-y="true" enhanced="true">
+  <view class="section list-section">
+    <view class="list">
+      <view class="list-item">
+        <view class="list-item__bd">关于我们</view>
+        <view class="list-item__ft">
+          <text class="list-item__arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section logout-section">
+    <button class="logout-btn" bindtap="onTapLogout">退出登录</button>
+  </view>
+</scroll-view>

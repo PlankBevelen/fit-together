@@ -1,9 +1,26 @@
 <navigation-bar title="我的" back="{{false}}" color="#111827" background="#fff" />
 
-<scroll-view class="profile page" scroll-y="true" enhanced="true">
+<view class="profile page">
   <view class="profile-header">
-    <view class="user-row">
-      <view class="avatar-wrap">
+    <view wx:if="{{!auth.isLoggedIn}}" class="login-banner-container">
+      <view wx:if="{{showLoginPrompt}}" class="login-banner">
+        <view class="login-banner-content">
+          <view class="login-banner-title">登录解锁完整体验</view>
+          <view class="login-banner-sub">跨设备备份 · 训练小队 · 情侣模式</view>
+        </view>
+        <view class="login-banner-actions">
+          <view class="login-banner-btn primary" bindtap="onTapLogin">登录 / 注册</view>
+          <view class="login-banner-close" bindtap="onTapSkipLogin">×</view>
+        </view>
+      </view>
+      <view wx:else class="login-banner-collapsed" bindtap="onRecallLoginPrompt">
+        <text class="login-banner-collapsed-text">登录 / 注册</text>
+        <text class="login-banner-collapsed-icon">›</text>
+      </view>
+    </view>
+
+    <view class="user-row" bindtap="onTapUserHeader">
+      <view class="avatar-wrap" hover-class="avatar-hover" hover-stay-time="100">
         <image class="avatar" src="{{user.avatarUrl}}" mode="aspectFill" />
         <view wx:if="{{profileComplete}}" class="online-dot">
           <text class="online-check">✓</text>
@@ -36,15 +53,6 @@
       </view>
     </view>
 
-    <view wx:if="{{showLoginPrompt}}" class="login-card">
-      <view class="login-title">登录后同步数据</view>
-      <view class="login-sub">跨设备备份 · 解锁训练小队/情侣模式</view>
-      <view class="login-actions">
-        <view class="login-btn primary" bindtap="onTapLogin">去登录</view>
-        <view class="login-btn" bindtap="onTapSkipLogin">先逛逛</view>
-      </view>
-    </view>
-
     <view wx:if="{{!profileComplete}}" class="profile-tip">
       <view class="profile-tip-left">
         <view class="profile-tip-title">完善资料，解锁更精准推荐</view>
@@ -71,89 +79,62 @@
     </view>
   </view>
 
-  <view class="section">
-    <view class="menu-card">
-      <view
-        wx:for="{{menuItems}}"
-        wx:key="id"
-        class="menu-item {{index < menuItems.length - 1 ? 'menu-item-border' : ''}}"
-        data-id="{{item.id}}"
-        bindtap="onTapMenuItem"
-      >
-        <view class="menu-icon" style="background: {{item.iconBg}};">
-          <text class="menu-icon-text" style="color: {{item.iconColor}};">{{item.iconText}}</text>
+  <view class="section list-section">
+    <view class="list">
+      <view class="list-item" bindtap="onTapProfile">
+        <view class="list-item__bd">个人资料</view>
+        <view class="list-item__ft">
+          <text class="list-item__arrow">›</text>
         </view>
+      </view>
 
-        <view class="menu-text">
-          <view class="menu-title">{{item.title}}</view>
-          <view class="menu-subtitle">{{item.subtitle}}</view>
+      <view class="list-item" bindtap="onTapCouple">
+        <view class="list-item__bd">情侣模式</view>
+        <view class="list-item__ft">
+          <text class="list-item__arrow">›</text>
         </view>
+      </view>
 
-        <view class="menu-right">
-          <view wx:if="{{item.badge}}" class="menu-badge">
-            <text class="menu-badge-text">{{item.badge}}</text>
-          </view>
-          <text class="menu-arrow">›</text>
+      <view class="list-item" bindtap="onTapSquad">
+        <view class="list-item__bd">训练小队</view>
+        <view class="list-item__ft">
+          <text class="list-item__arrow">›</text>
+        </view>
+      </view>
+
+      <view class="list-item" open-type="feedback" plain="true">
+        <view class="list-item__bd">意见反馈</view>
+        <view class="list-item__ft">
+          <text class="list-item__arrow">›</text>
+        </view>
+      </view>
+
+      <view class="list-item" bindtap="onTapSettings">
+        <view class="list-item__bd">设置</view>
+        <view class="list-item__ft">
+          <text class="list-item__arrow">›</text>
         </view>
       </view>
     </view>
   </view>
 
-  <view wx:if="{{auth.isLoggedIn}}" class="section logout-section">
-    <button class="logout-btn" bindtap="onTapLogout">退出登录</button>
-  </view>
-
-  <view wx:if="{{showProfileForm}}" class="overlay">
-    <view class="overlay-backdrop" catchtap="onCloseProfileForm"></view>
-    <view class="drawer" catchtap="noop">
-      <view class="drawer-grabber"></view>
-      <view class="form-head">
-        <view class="form-title">完善资料</view>
-        <view class="form-desc">{{auth.isLoggedIn ? '将保存到账号' : '将保存到本地草稿'}}</view>
+  <!-- Login Sheet -->
+  <view wx:if="{{showLoginSheet}}" class="login-sheet-overlay" style="pointer-events: none;">
+    <view class="login-sheet" style="pointer-events: auto;">
+      <view class="login-sheet-grabber"></view>
+      <view class="login-sheet-head">
+        <view class="login-sheet-title">需登录后使用</view>
+        <view class="login-sheet-close" bindtap="onCloseLoginSheet">×</view>
       </view>
-
-      <view class="form-body">
-        <view class="form-field">
-          <view class="form-label">身高</view>
-          <view class="form-input-row">
-            <input class="form-input" type="digit" value="{{form.heightCm}}" data-field="heightCm" bindinput="onFormInput" placeholder="例如 175" />
-            <text class="form-unit">cm</text>
-          </view>
+      <view class="login-sheet-body">
+        <text class="login-sheet-desc">登录后可同步数据，并解锁训练小队/情侣模式等功能。</text>
+        <view class="login-sheet-actions">
+          <view class="login-sheet-btn primary" bindtap="onTapLogin">去登录</view>
+          <view class="login-sheet-btn ghost" bindtap="onCloseLoginSheet">稍后再说</view>
         </view>
-
-        <view class="form-field">
-          <view class="form-label">当前体重</view>
-          <view class="form-input-row">
-            <input class="form-input" type="digit" value="{{form.weightKg}}" data-field="weightKg" bindinput="onFormInput" placeholder="例如 71.0" />
-            <text class="form-unit">kg</text>
-          </view>
-        </view>
-
-        <view class="form-field">
-          <view class="form-label">目标体重</view>
-          <view class="form-input-row">
-            <input class="form-input" type="digit" value="{{form.targetWeightKg}}" data-field="targetWeightKg" bindinput="onFormInput" placeholder="例如 68.0" />
-            <text class="form-unit">kg</text>
-          </view>
-        </view>
-
-        <view class="form-field">
-          <view class="form-label">目标</view>
-          <picker mode="selector" range="{{goalOptions}}" value="{{form.goalIndex}}" bindchange="onGoalChange">
-            <view class="picker-box">
-              <text class="picker-text">{{goalOptions[form.goalIndex]}}</text>
-              <text class="picker-arrow">›</text>
-            </view>
-          </picker>
-        </view>
-      </view>
-
-      <view class="form-actions">
-        <view class="form-btn primary" bindtap="onTapSaveProfile">保存</view>
-        <view class="form-btn ghost" bindtap="onCloseProfileForm">先不填</view>
       </view>
     </view>
   </view>
-</scroll-view>
+</view>
 
 <custom-tab-bar />

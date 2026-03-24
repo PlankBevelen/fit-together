@@ -3,7 +3,9 @@ export type GoalType = "cut" | "bulk" | "maintain";
 export type ProfileDraft = {
   name?: string;
   avatarUrl?: string;
-  gender?: "male" | "female";
+  gender?: "male" | "female" | "other";
+  birthday?: string;
+  bio?: string;
   birthYear?: string;
   heightCm?: string;
   weightKg?: string;
@@ -29,8 +31,8 @@ function normalizeGoal(value: unknown): GoalType | undefined {
   return undefined;
 }
 
-function normalizeGender(value: unknown): "male" | "female" | undefined {
-  if (value === "male" || value === "female") return value;
+function normalizeGender(value: unknown): "male" | "female" | "other" | undefined {
+  if (value === "male" || value === "female" || value === "other") return value;
   return undefined;
 }
 
@@ -43,6 +45,8 @@ function readProfile(key: string): ProfileDraft | undefined {
 
   if (typeof raw.name === "string") draft.name = raw.name;
   if (typeof raw.avatarUrl === "string") draft.avatarUrl = raw.avatarUrl;
+  if (typeof raw.birthday === "string") draft.birthday = raw.birthday;
+  if (typeof raw.bio === "string") draft.bio = raw.bio;
   if (typeof raw.birthYear === "string") draft.birthYear = raw.birthYear;
   if (typeof raw.heightCm === "string") draft.heightCm = raw.heightCm;
   if (typeof raw.weightKg === "string") draft.weightKg = raw.weightKg;
