@@ -30,8 +30,8 @@
     </view>
     <view class="stat-divider" />
     <view class="stat">
-      <view class="stat-value stat-orange">{{ burnedKcal }}</view>
-      <view class="stat-label">运动消耗</view>
+      <view class="stat-value stat-orange">{{ targetKcal }}</view>
+      <view class="stat-label">目标 kcal</view>
     </view>
     <view class="stat-divider" />
     <view class="stat">
@@ -50,17 +50,25 @@
     </view>
   </view>
 
-  <view class="card-1 meal" bindtap="onTapMealPlan">
-    <view class="meal-left">
-      <view class="meal-title-row">
-        <text class="meal-title">{{ mealPlanTitle }}</text>
-        <view class="meal-badge"><text class="meal-badge-text">{{ mealPlanStatus }}</text></view>
-      </view>
-      <text class="meal-sub">{{ mealPlanMeals }}</text>
+  <view class="card-1 meal-list">
+    <view class="meal-list-header">
+      <text class="meal-list-title">今日饮食</text>
+      <text class="meal-list-subtitle">{{ planValue !== '--' ? targetKcal + ' kcal' : '暂无排餐' }}</text>
     </view>
-    <view class="meal-right">
-      <text class="meal-kcal">{{ targetKcal }} kcal</text>
-      <text class="meal-arrow">›</text>
+    <view class="meal-item" wx:for="{{todayMeals}}" wx:key="id" bindtap="onToggleMeal" data-index="{{index}}">
+      <view class="meal-item-left">
+        <view class="checkbox {{item.checked ? 'checked' : ''}}">
+          <text wx:if="{{item.checked}}" class="checkmark">✓</text>
+        </view>
+        <view class="meal-item-info">
+          <text class="meal-item-name {{item.checked ? 'checked-text' : ''}}">{{item.name}}</text>
+          <text class="meal-item-desc {{item.checked ? 'checked-text' : ''}}">{{item.desc}}</text>
+        </view>
+      </view>
+      <text class="meal-item-kcal {{item.checked ? 'checked-text' : ''}}">{{item.kcal}} kcal</text>
+    </view>
+    <view wx:if="{{todayMeals.length === 0}}" class="meal-empty">
+      {{auth.isLoggedIn ? '今日休息，无需按计划饮食' : '登录后生成今日饮食清单'}}
     </view>
   </view>
 

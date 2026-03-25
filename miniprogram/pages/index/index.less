@@ -110,58 +110,99 @@
   }
 }
 
-.meal {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  .meal-left {
-    flex: 1;
-    min-width: 0;
-    .meal-title-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
-      .meal-title {
-        font-size: 14px;
-        font-weight: 700;
-        color: #111827;
-      }
-      .meal-badge {
-        padding: 1px 6px;
-        border-radius: 4px;
-        background: #eef2ff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        .meal-badge-text {
-          font-size: 11px;
-          color: @primary;
-          font-weight: 500;
-        }
-      }
-    }
-    .meal-sub {
-      display: block;
-      font-size: 13px;
-      color: @text2;
-    }
-  }
-  .meal-right {
+.meal-list {
+  padding: 0;
+  overflow: hidden;
+  .meal-list-header {
+    padding: 14px 16px;
     display: flex;
     align-items: center;
-    gap: 4px;
-    margin-left: 16rpx;
-    .meal-kcal {
-      font-size: 14px;
-      color: @primary;
-      font-weight: 600;
+    justify-content: space-between;
+    border-bottom: 1px solid @divider;
+  }
+  .meal-list-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: @text;
+  }
+  .meal-list-subtitle {
+    font-size: 12px;
+    color: @text2;
+  }
+  .meal-item {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid @divider;
+    transition: background-color 0.2s;
+    &:active {
+      background-color: @bg2;
     }
-    .meal-arrow {
-      font-size: 34rpx;
-      color: @text2;
-      line-height: 1;
+    &:last-child {
+      border-bottom: none;
     }
+  }
+  .meal-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid @divider;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    &.checked {
+      background: @success;
+      border-color: @success;
+    }
+  }
+  .checkmark {
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .meal-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .meal-item-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: @text;
+    transition: color 0.2s;
+    &.checked-text {
+      color: @text3;
+      text-decoration: line-through;
+    }
+  }
+  .meal-item-desc {
+    font-size: 11px;
+    color: @text2;
+    &.checked-text {
+      color: @text3;
+      text-decoration: line-through;
+    }
+  }
+  .meal-item-kcal {
+    font-size: 14px;
+    font-weight: 600;
+    color: @text;
+    &.checked-text {
+      color: @text3;
+    }
+  }
+  .meal-empty {
+    text-align: center;
+    color: @text3;
+    font-size: 13px;
+    padding: 20px 0;
   }
 }
 

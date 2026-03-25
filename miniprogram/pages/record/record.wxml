@@ -139,7 +139,7 @@
       <view class="card-2 suggestion" wx:if="{{auth.isLoggedIn && historyRecords.length > 0}}">
         <view class="suggestion-title">本周建议</view>
         <text class="suggestion-text">
-          本周体重下降 1.3kg，进展良好！蛋白质平均完成度达到 87%，建议高碳日可以适当增加训练强度。下周继续保持当前方案，重点关注腰围变化。
+          本周体重下降 1.3kg，进展良好！蛋白质平均完成度达到 87%，建议可以适当增加训练强度。下周继续保持当前方案，重点关注腰围变化。
         </text>
       </view>
     </view>
