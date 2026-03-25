@@ -63,11 +63,11 @@ function executeRequest<T = any>(options: RequestOptions, resolve: (val: any) =>
           requestsQueue.push({ resolve, reject, options });
 
           doSilentLogin()
-            .then((newToken) => {
+            .then(() => {
               requestsQueue.forEach((req) => executeRequest(req.options, req.resolve, req.reject));
               requestsQueue = [];
             })
-            .catch((err) => {
+            .catch(() => {
               clearToken();
               requestsQueue.forEach((req) => req.reject(new Error('登录已过期，请重新登录')));
               requestsQueue = [];
@@ -109,11 +109,11 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
       requestsQueue.push({ resolve, reject, options });
       
       doSilentLogin()
-        .then((newToken) => {
+        .then(() => {
           requestsQueue.forEach((req) => executeRequest(req.options, req.resolve, req.reject));
           requestsQueue = [];
         })
-        .catch((err) => {
+        .catch(() => {
           requestsQueue.forEach((req) => req.reject(new Error('未登录')));
           requestsQueue = [];
           wx.navigateTo({ url: '/pages/login/login' });

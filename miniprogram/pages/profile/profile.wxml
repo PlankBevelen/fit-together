@@ -19,19 +19,23 @@
       </view>
     </view>
 
-    <view class="user-row" bindtap="onTapUserHeader">
-      <view class="avatar-wrap" hover-class="avatar-hover" hover-stay-time="100">
-        <image class="avatar" src="{{user.avatarUrl}}" mode="aspectFill" />
-        <view wx:if="{{profileComplete}}" class="online-dot">
-          <text class="online-check">✓</text>
+    <view class="user-card" bindtap="onTapUserHeader">
+      <view class="user-row">
+        <view class="avatar-wrap" hover-class="avatar-hover" hover-stay-time="100">
+          <image class="avatar" src="{{user.avatarUrl}}" mode="aspectFill" />
+          <view wx:if="{{profileComplete}}" class="online-dot">
+            <text class="online-check">✓</text>
+          </view>
         </view>
-      </view>
 
-      <view class="user-info">
-        <view class="user-name">{{user.name}}</view>
-        <view class="user-sub">
-          训练第 <text class="user-sub-strong">{{user.trainingDays}}</text> 天
+        <view class="user-info">
+          <view class="user-name">{{user.name}}</view>
+          <view class="user-sub">
+            训练第 <text class="user-sub-strong">{{user.trainingDays}}</text> 天
+          </view>
         </view>
+        
+        <view class="user-arrow">›</view>
       </view>
 
       <view class="stats-row">
@@ -39,17 +43,11 @@
           <view class="stat-value">{{stats.bmi}}</view>
           <view class="stat-label">BMI</view>
         </view>
+        <view class="stat-divider"></view>
         <view class="stat-card">
           <view class="stat-value">{{stats.weekCheckins}}</view>
           <view class="stat-label">本周打卡</view>
         </view>
-      </view>
-    </view>
-
-    <view class="progress-row">
-      <view wx:for="{{progressStats}}" wx:key="label" class="progress-cell">
-        <view class="progress-value" style="color: {{item.color}};">{{item.value}}</view>
-        <view class="progress-label">{{item.label}}</view>
       </view>
     </view>
 
@@ -62,24 +60,7 @@
     </view>
   </view>
 
-  <view class="section">
-    <view class="section-title">本周打卡</view>
-    <view class="week-card">
-      <view wx:for="{{weekDays}}" wx:key="day" class="week-item">
-        <view
-          class="week-dot"
-          style="background: {{item.done ? (item.isToday ? colors.primary : colors.success) : colors.bg2}}; border: {{item.isToday ? ('2px solid ' + colors.primary) : 'none'}};"
-        >
-          <text class="week-dot-text" style="color: {{ item.done ? '#FFFFFF' : colors.text3 }};">
-            {{item.done ? '✓' : '—'}}
-          </text>
-        </view>
-        <text class="week-label" style="color: {{ item.isToday ? colors.primary : colors.text3 }};">周{{item.day}}</text>
-      </view>
-    </view>
-  </view>
-
-  <view class="section list-section">
+  <view class="list-section">
     <view class="list">
       <view class="list-item" bindtap="onTapProfile">
         <view class="list-item__bd">个人资料</view>

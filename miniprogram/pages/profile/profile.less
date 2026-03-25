@@ -1,17 +1,25 @@
 .profile.page {
-  background: #FFFFFF;
+  background: #fff;
   padding: 0 0 170rpx;
 }
 
 .profile-header {
-  background: @primaryBg;
-  padding: 20px 16px 24px;
+  background: linear-gradient(to bottom, @primaryBg 0%, #F4F5F7 100%);
+  padding: 16px 16px 16px;
+}
+
+.user-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(55, 48, 163, 0.06);
 }
 
 .user-row {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .avatar-wrap {
@@ -20,10 +28,11 @@
 }
 
 .avatar {
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  border: 3px solid rgba(55, 48, 163, 0.19);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .online-dot {
@@ -52,15 +61,19 @@
 }
 
 .user-name {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 700;
   color: @text;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .user-sub {
-  font-size: 13px;
+  font-size: 12px;
   color: @text2;
+  background: @bg2;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 99px;
 }
 
 .user-sub-strong {
@@ -68,111 +81,54 @@
   font-weight: 700;
 }
 
-.stats-row {
-  display: flex;
-  gap: 12px;
-}
-
-.stat-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 8px 12px;
-  text-align: center;
-  box-shadow: 0 1px 4px rgba(55, 48, 163, 0.1);
-}
-
-.stat-value {
-  font-size: 16px;
-  font-weight: 700;
-  color: @primary;
-}
-
-.stat-label {
-  font-size: 11px;
+.user-arrow {
+  font-size: 24px;
   color: @text3;
 }
 
-.progress-row {
+.stats-row {
   display: flex;
-  gap: 16px;
-  margin-top: 16px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px 14px;
-  box-shadow: 0 1px 4px rgba(55, 48, 163, 0.08);
+  align-items: center;
+  background: @bg2;
+  border-radius: 12px;
+  padding: 12px 0;
 }
 
-.progress-cell {
+.stat-card {
   flex: 1;
   text-align: center;
 }
 
-.progress-value {
-  font-size: 13px;
-  font-weight: 600;
+.stat-divider {
+  width: 1px;
+  height: 24px;
+  background: @divider;
 }
 
-.progress-label {
-  font-size: 11px;
-  color: @text3;
-}
-
-.section {
-  padding: 14px 16px 8px;
-}
-
-.section-title {
-  font-size: 13px;
-  font-weight: 600;
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
   color: @text;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
-.week-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px 16px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.week-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.week-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-}
-
-.week-dot-text {
-  font-size: 13px;
-}
-
-.week-label {
-  font-size: 11px;
+.stat-label {
+  font-size: 12px;
+  color: @text2;
 }
 
 .list-section {
-  padding-top: 8px;
+  padding: 0 16px 24px;
 }
 
 .list {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
 }
 
 .list-item {
-  height: 88rpx;
+  height: 104rpx;
   padding: 0 32rpx;
   display: flex;
   align-items: center;
@@ -244,25 +200,25 @@ button.list-item::after {
   margin-bottom: 16px;
 }
 .login-banner {
-  background: @primaryBg;
-  border-radius: 12px;
-  padding: 12px 14px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(55, 48, 163, 0.06);
 }
 .login-banner-content {
   flex: 1;
 }
 .login-banner-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  color: @primary;
+  color: @text;
 }
 .login-banner-sub {
-  font-size: 12px;
-  color: @primary;
-  opacity: 0.8;
+  font-size: 13px;
+  color: @text2;
   margin-top: 4px;
 }
 .login-banner-actions {
@@ -286,7 +242,7 @@ button.list-item::after {
 .login-banner-close {
   margin-left: auto;
   font-size: 20px;
-  color: @primary;
+  color: @text3;
   padding: 0 8px;
 }
 
@@ -294,10 +250,11 @@ button.list-item::after {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: @primaryBg;
-  padding: 4px 10px;
+  background: #fff;
+  padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(55, 48, 163, 0.2);
+  border: 1px solid rgba(55, 48, 163, 0.1);
+  box-shadow: 0 2px 8px rgba(55, 48, 163, 0.04);
 }
 .login-banner-collapsed-text {
   font-size: 12px;
@@ -306,11 +263,12 @@ button.list-item::after {
 }
 
 .profile-tip {
-  margin-top: 12px;
+  margin-top: 16px;
   background: #fff;
-  border-radius: 12px;
-  padding: 12px 14px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(55, 48, 163, 0.06);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -323,25 +281,25 @@ button.list-item::after {
 }
 
 .profile-tip-title {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: @text;
 }
 
 .profile-tip-sub {
-  margin-top: 3px;
-  font-size: 11px;
+  margin-top: 4px;
+  font-size: 12px;
   color: @text2;
 }
 
 .profile-tip-btn {
   flex-shrink: 0;
-  height: 34px;
-  padding: 0 12px;
-  border-radius: 10px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 12px;
   background: @primary;
   color: #fff;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   display: flex;
   align-items: center;
