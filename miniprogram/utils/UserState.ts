@@ -100,7 +100,7 @@ export function isProfileComplete(profile?: ProfileDraft) {
   if (!profile.heightCm) return false;
   if (!profile.weightKg) return false;
   if (!profile.targetWeightKg) return false;
-  if (!profile.goal) return false;
+  if (!profile.gender) return false;
   return true;
 }
 

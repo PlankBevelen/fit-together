@@ -2,7 +2,7 @@
 <view class="page login-page">
   <view class="login-container">
     <view class="logo-area">
-      <image class="logo-image" src="/static/logo.png" mode="aspectFit" />
+      <image class="logo-image" src="/static/image/logo.png" mode="aspectFit" />
       <view class="logo-title">Fit Together</view>
       <view class="logo-subtitle">随时随地，同步你的训练数据</view>
     </view>

@@ -25,47 +25,54 @@
         </view>
       </scroll-view>
 
-      <view class="meal-info card-2">
-        <view class="meal-info-left">
-          <view class="tag" style="border-color: {{colors.success}};">
-            <text class="tag-text" style="color: {{colors.success}};">{{mealPlans[activePlanIndex].name}}</text>
-          </view>
+      <view class="meal-info" style="justify-content: flex-end; padding: 0 16px 12px;" wx:if="{{mealPlans.length > 0}}">
+        <view bindtap="onDeletePlan" style="color: {{colors.danger}}; font-size: 13px; display: flex; align-items: center; gap: 4px; padding: 4px;">
+          <text>🗑</text>
+          <text>删除当前套餐</text>
         </view>
-        <text class="meal-info-right">目标热量 2480kcal</text>
       </view>
 
-      <view wx:for="{{mealCards}}" wx:key="section" wx:for-item="card" class="meal-card card-1">
-        <view class="meal-card-head">
-          <view class="meal-card-title">{{card.section}}</view>
-          <view class="meal-card-add" bindtap="onTapAddMealItem" data-section="{{card.section}}">
-            <text class="meal-card-add-plus" style="color: {{colors.primary}};">＋</text>
-            <text class="meal-card-add-text" style="color: {{colors.primary}};">添加</text>
-          </view>
+      <view wx:if="{{mealPlans.length === 0}}" style="text-align: center; padding: 40px 0; color: #9CA3AF; font-size: 14px;">
+        <view class="empty-state">
+          <view class="lottie-mock"></view>
+          <view class="empty-text">暂无套餐，请点击上方“新建套餐”或右下角AI生成</view>
         </view>
+      </view>
 
-        <view wx:for="{{card.items}}" wx:key="food" wx:for-item="food" class="meal-item">
-          <view class="meal-item-left">
-            <text class="meal-item-food">{{food.food}}</text>
-            <text class="meal-item-grams">{{food.grams}}</text>
-          </view>
-          <view class="meal-item-right">
-            <text class="meal-item-kcal">{{food.kcal}}</text>
-            <view
-              class="meal-item-trash"
-              bindtap="onRemoveMealItem"
-              data-section="{{card.section}}"
-              data-index="{{index}}"
-            >
-              <text class="meal-item-trash-icon">🗑</text>
+      <view wx:if="{{mealPlans.length > 0}}">
+        <view wx:for="{{mealCards}}" wx:key="section" wx:for-item="card" class="meal-card card-1">
+          <view class="meal-card-head">
+            <view class="meal-card-title">{{card.section}}</view>
+            <view class="meal-card-add" bindtap="onTapAddMealItem" data-section="{{card.section}}">
+              <text class="meal-card-add-plus" style="color: {{colors.primary}};">＋</text>
+              <text class="meal-card-add-text" style="color: {{colors.primary}};">添加</text>
             </view>
           </view>
-        </view>
-        <view wx:if="{{card.items.length === 0}}" class="meal-item-empty" style="text-align: center; color: #9CA3AF; font-size: 13px; padding: 12px 0;">
-          {{auth.isLoggedIn ? '暂无饮食安排' : '登录后生成个性化排餐'}}
-        </view>
 
-        <view class="meal-card-foot">
-          <text class="meal-card-total">小计 {{card.totalKcal}} kcal</text>
+          <view wx:for="{{card.items}}" wx:key="food" wx:for-item="food" class="meal-item">
+            <view class="meal-item-left">
+              <text class="meal-item-food">{{food.food}}</text>
+              <text class="meal-item-grams">{{food.grams}}</text>
+            </view>
+            <view class="meal-item-right">
+              <text class="meal-item-kcal">{{food.kcal}}</text>
+              <view
+                class="meal-item-trash"
+                bindtap="onRemoveMealItem"
+                data-section="{{card.section}}"
+                data-index="{{index}}"
+              >
+                <text class="meal-item-trash-icon">🗑</text>
+              </view>
+            </view>
+          </view>
+          <view wx:if="{{card.items.length === 0}}" class="meal-item-empty" style="text-align: center; color: #9CA3AF; font-size: 13px; padding: 12px 0;">
+            暂无饮食安排
+          </view>
+
+          <view class="meal-card-foot">
+            <text class="meal-card-total">小计 {{card.totalKcal}} kcal</text>
+          </view>
         </view>
       </view>
 
@@ -83,7 +90,7 @@
         <view class="nutrition-right">
           <view class="nutrition-total-label">总热量</view>
           <view class="nutrition-total" style="color: {{mealTotalKcal >= 2400 ? colors.success : colors.secondary}};">
-            {{mealTotalKcal}}
+            {{mealTotalKcal || 0}}
             <text class="nutrition-unit">kcal</text>
           </view>
         </view>
@@ -195,6 +202,96 @@
       </scroll-view>
     </view>
   </view>
+
+  <view wx:if="{{showAIDrawer}}" class="overlay">
+    <view class="overlay-backdrop" catchtap="onCloseAIDrawer"></view>
+    <view class="drawer" catchtap="noop">
+      <view class="drawer-grabber"></view>
+      <view class="picker-head">
+        <view class="picker-title">✨ AI 智能排餐</view>
+      </view>
+      <view class="ai-drawer-content" style="padding: 24px; text-align: center;">
+        <view style="font-size: 16px; color: #111827; margin-bottom: 12px;">根据你的身体数据与目标，一键生成专属饮食方案</view>
+        <view style="font-size: 14px; color: #6B7280; margin-bottom: 24px;">我们将使用大语言模型为你定制最合适的营养搭配</view>
+        <button 
+          class="primary-btn" 
+          style="background: {{colors.primary}}; color: #fff; border-radius: 8px; width: 100%;"
+          bindtap="onGeneratePlan"
+          loading="{{isGenerating}}"
+          disabled="{{isGenerating}}"
+        >
+          {{isGenerating ? '生成中...' : '开始生成'}}
+        </button>
+      </view>
+    </view>
+  </view>
+  <view wx:if="{{showAddPlanModal}}" class="overlay">
+    <view class="overlay-backdrop" catchtap="onCloseAddPlan"></view>
+    <view class="drawer" catchtap="noop">
+      <view class="drawer-grabber"></view>
+      <view class="picker-head">
+        <view class="picker-title">新建套餐</view>
+      </view>
+      <view class="form-content" style="padding: 24px;">
+        <input 
+          class="form-input" 
+          placeholder="请输入套餐名称 (如: 考前冲刺减脂)" 
+          value="{{newPlanName}}"
+          bindinput="onPlanNameInput"
+          style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-bottom: 24px; font-size: 16px;"
+        />
+        <button 
+          class="primary-btn" 
+          style="background: {{colors.primary}}; color: #fff; border-radius: 8px; width: 100%;"
+          bindtap="onConfirmAddPlan"
+        >
+          确定
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showAddMealItemModal}}" class="overlay">
+    <view class="overlay-backdrop" catchtap="onCloseAddMealItem"></view>
+    <view class="drawer" catchtap="noop">
+      <view class="drawer-grabber"></view>
+      <view class="picker-head">
+        <view class="picker-title">添加{{currentMealSection}}食物</view>
+      </view>
+      <view class="form-content" style="padding: 24px;">
+        <input 
+          class="form-input" 
+          placeholder="食物名称 (如: 燕麦)" 
+          value="{{newMealItem.food}}"
+          bindinput="onMealItemFoodInput"
+          style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 16px;"
+        />
+        <input 
+          class="form-input" 
+          placeholder="重量 (如: 100g)" 
+          value="{{newMealItem.grams}}"
+          bindinput="onMealItemGramsInput"
+          style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 16px;"
+        />
+        <input 
+          class="form-input" 
+          placeholder="热量 (如: 150kcal)" 
+          value="{{newMealItem.kcal}}"
+          bindinput="onMealItemKcalInput"
+          type="text"
+          style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-bottom: 24px; font-size: 16px;"
+        />
+        <button 
+          class="primary-btn" 
+          style="background: {{colors.primary}}; color: #fff; border-radius: 8px; width: 100%;"
+          bindtap="onConfirmAddMealItem"
+        >
+          确定
+        </button>
+      </view>
+    </view>
+  </view>
+
 </view>
 
 <custom-tab-bar />

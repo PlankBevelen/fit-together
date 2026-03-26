@@ -1,4 +1,5 @@
 import { getAuthState } from "../../utils/UserState"
+import { request } from "../../utils/request"
 
 type MealItem = { food: string; grams: string; kcal: string };
 type MealSection = { name: string; items: MealItem[] };
@@ -28,57 +29,7 @@ const COLORS = {
   text3: "#9CA3AF",
 };
 
-const defaultMealsInit: Meals = {
-  早餐: {
-    name: "早餐",
-    items: [
-      { food: "全麦面包", grams: "60g", kcal: "158kcal" },
-      { food: "水煮蛋", grams: "60g", kcal: "86kcal" },
-      { food: "脱脂牛奶", grams: "250ml", kcal: "88kcal" },
-    ],
-  },
-  午餐: {
-    name: "午餐",
-    items: [
-      { food: "糙米饭", grams: "150g", kcal: "174kcal" },
-      { food: "鸡胸肉", grams: "120g", kcal: "127kcal" },
-      { food: "西兰花", grams: "100g", kcal: "34kcal" },
-    ],
-  },
-  晚餐: {
-    name: "晚餐",
-    items: [
-      { food: "红薯", grams: "200g", kcal: "172kcal" },
-      { food: "三文鱼", grams: "100g", kcal: "139kcal" },
-      { food: "沙拉", grams: "120g", kcal: "45kcal" },
-    ],
-  },
-  加餐: {
-    name: "加餐",
-    items: [
-      { food: "香蕉", grams: "100g", kcal: "89kcal" },
-      { food: "乳清蛋白粉", grams: "30g", kcal: "120kcal" },
-    ],
-  },
-};
-
-const mealPlansInit: MealPlan[] = [
-  {
-    id: "plan_a",
-    name: "增肌方案A",
-    meals: defaultMealsInit
-  },
-  {
-    id: "plan_b",
-    name: "低脂减脂",
-    meals: {
-      早餐: { name: "早餐", items: [{ food: "燕麦粥", grams: "80g", kcal: "290kcal" }, { food: "水煮蛋", grams: "60g", kcal: "86kcal" }] },
-      午餐: { name: "午餐", items: [{ food: "蔬菜沙拉", grams: "200g", kcal: "100kcal" }, { food: "鸡胸肉", grams: "150g", kcal: "159kcal" }] },
-      晚餐: { name: "晚餐", items: [{ food: "蒸西兰花", grams: "150g", kcal: "51kcal" }, { food: "牛里脊", grams: "100g", kcal: "107kcal" }] },
-      加餐: { name: "加餐", items: [] },
-    }
-  }
-];
+const mealPlansInit: MealPlan[] = [];
 
 function parseKcal(value: string) {
   const n = parseInt(value, 10);
@@ -194,6 +145,15 @@ Page({
     showPlanPicker: false,
     pickerDay: "",
     pickerSelectedPlanId: "",
+
+    isGenerating: false,
+    
+    showAddPlanModal: false,
+    newPlanName: "",
+
+    showAddMealItemModal: false,
+    currentMealSection: "",
+    newMealItem: { food: "", grams: "", kcal: "" } as MealItem,
   },
 
   onLoad() {
@@ -207,12 +167,12 @@ Page({
     }
   },
 
-  syncAuthState() {
+  async syncAuthState() {
     const auth = getAuthState();
     if (!auth.isLoggedIn) {
       this.setData({
         auth,
-        mealPlans: [{ id: "empty", name: "未命名方案", meals: emptyMeals }],
+        mealPlans: [],
         activePlanIndex: 0,
         nutritionSummary: [
           { label: "蛋白质", value: "0g", color: "#4ADE80" },
@@ -221,33 +181,64 @@ Page({
         ],
         calendarPlans: {} as Record<string, string>,
       });
+      this.updateDerivedData();
     } else {
-      this.setData({
-        auth,
-        mealPlans: mealPlansInit,
-        nutritionSummary: [
-          { label: "蛋白质", value: "162g", color: "#4ADE80" },
-          { label: "碳水", value: "268g", color: COLORS.secondary },
-          { label: "脂肪", value: "52g", color: "#FB923C" },
-        ],
-        calendarPlans: {
-          周一: "plan_a",
-          周三: "plan_a",
-          周五: "plan_b",
-          周日: "plan_b",
-        },
-      });
+      this.setData({ auth });
+      await this.fetchPlans();
     }
+  },
 
-    this.updateDerivedData();
+  async fetchPlans() {
+    try {
+      const res = await request({
+        url: '/plan',
+        method: 'GET',
+      });
+      
+      if (res && res.data && res.data.plans && res.data.plans.length > 0) {
+        this.setData({
+          mealPlans: res.data.plans,
+          activePlanIndex: 0,
+        });
+      } else {
+        // 如果没有计划，设置为空数组
+        this.setData({
+          mealPlans: [],
+          activePlanIndex: 0,
+        });
+      }
+      
+      // 更新营养总结和日历
+      this.setData({
+        nutritionSummary: [
+          { label: "蛋白质", value: "0g", color: "#4ADE80" },
+          { label: "碳水", value: "0g", color: COLORS.secondary },
+          { label: "脂肪", value: "0g", color: "#FB923C" },
+        ],
+        calendarPlans: {},
+      });
+      
+      this.updateDerivedData();
+    } catch (err) {
+      console.error('Failed to fetch plans', err);
+      // Fallback to empty
+      this.setData({ mealPlans: [] });
+      this.updateDerivedData();
+    }
   },
 
   updateDerivedData() {
     const plans = this.data.mealPlans;
     const activeIndex = this.data.activePlanIndex;
-    const currentPlan = plans[activeIndex] || plans[0];
+    const currentPlan = plans[activeIndex];
     
-    const mealDerived = buildMealCards(currentPlan.meals, this.data.mealSections);
+    let mealDerived = { cards: [], totalKcal: 0 };
+    if (currentPlan && currentPlan.meals) {
+      mealDerived = buildMealCards(currentPlan.meals, this.data.mealSections);
+    } else {
+      mealDerived = buildMealCards(emptyMeals, this.data.mealSections);
+    }
+    
     const calendarDays = buildCalendarDays(this.data.calendarPlans, plans);
     const calendarMonthDays = buildMonthDays(plans);
 
@@ -275,14 +266,191 @@ Page({
   },
 
   onAddPlan() {
-    wx.showToast({ title: "敬请期待", icon: "none" });
+    if (!this.data.auth.isLoggedIn) {
+      wx.showToast({ title: "请先登录", icon: "none" });
+      return;
+    }
+    this.setData({ showAddPlanModal: true, newPlanName: "" });
   },
 
-  onTapAddMealItem() {
-    wx.showToast({ title: "敬请期待", icon: "none" });
+  onCloseAddPlan() {
+    this.setData({ showAddPlanModal: false });
   },
 
-  onRemoveMealItem(event: any) {
+  onPlanNameInput(event: any) {
+    this.setData({ newPlanName: event.detail.value });
+  },
+
+  async onConfirmAddPlan() {
+    const name = this.data.newPlanName.trim();
+    if (!name) {
+      wx.showToast({ title: "请输入套餐名称", icon: "none" });
+      return;
+    }
+
+    wx.showLoading({ title: "保存中" });
+    try {
+      const res = await request({
+        url: '/plan',
+        method: 'POST',
+        data: {
+          name,
+          meals: emptyMeals,
+          isActive: true
+        }
+      });
+
+      if (res && res.data && res.data.plan) {
+        const savedPlan = res.data.plan;
+        const updatedPlans = [...this.data.mealPlans, savedPlan];
+        
+        this.setData({
+          mealPlans: updatedPlans,
+          activePlanIndex: updatedPlans.length - 1,
+          showAddPlanModal: false,
+          newPlanName: ""
+        }, () => {
+          this.updateDerivedData();
+          wx.hideLoading();
+          wx.showToast({ title: '创建成功', icon: 'success' });
+        });
+      }
+    } catch (err: any) {
+      wx.hideLoading();
+      wx.showToast({ title: err.message || '创建失败', icon: 'none' });
+    }
+  },
+
+  async onDeletePlan() {
+    if (!this.data.auth.isLoggedIn) {
+      wx.showToast({ title: "请先登录", icon: "none" });
+      return;
+    }
+    
+    const plans = this.data.mealPlans;
+    if (plans.length === 0) return;
+    
+    const currentPlan = plans[this.data.activePlanIndex];
+    if (!currentPlan) return;
+
+    wx.showModal({
+      title: '删除套餐',
+      content: `确定要删除「${currentPlan.name}」吗？`,
+      confirmColor: COLORS.danger,
+      success: async (res) => {
+        if (res.confirm) {
+          wx.showLoading({ title: "删除中" });
+          
+          try {
+            // 如果这个计划有关联的后端ID
+            if (currentPlan.id && !currentPlan.id.startsWith('plan_') && currentPlan.id !== 'empty') {
+              await request({
+                url: `/plan/${currentPlan.id}`,
+                method: 'DELETE',
+              });
+            }
+
+            const updatedPlans = plans.filter((_, index) => index !== this.data.activePlanIndex);
+            
+            this.setData({
+              mealPlans: updatedPlans,
+              activePlanIndex: 0
+            }, () => {
+              this.updateDerivedData();
+              wx.hideLoading();
+              wx.showToast({ title: '删除成功', icon: 'success' });
+            });
+            
+          } catch (err: any) {
+            wx.hideLoading();
+            wx.showToast({ title: err.message || '删除失败', icon: 'none' });
+          }
+        }
+      }
+    });
+  },
+
+  onTapAddMealItem(event: any) {
+    if (!this.data.auth.isLoggedIn) {
+      wx.showToast({ title: "请先登录", icon: "none" });
+      return;
+    }
+    const section = String(event.currentTarget.dataset.section || "");
+    if (!section) return;
+
+    this.setData({
+      showAddMealItemModal: true,
+      currentMealSection: section,
+      newMealItem: { food: "", grams: "", kcal: "" }
+    });
+  },
+
+  onCloseAddMealItem() {
+    this.setData({ showAddMealItemModal: false });
+  },
+
+  onMealItemFoodInput(event: any) {
+    this.setData({ 'newMealItem.food': event.detail.value });
+  },
+
+  onMealItemGramsInput(event: any) {
+    this.setData({ 'newMealItem.grams': event.detail.value });
+  },
+
+  onMealItemKcalInput(event: any) {
+    this.setData({ 'newMealItem.kcal': event.detail.value });
+  },
+
+  async onConfirmAddMealItem() {
+    const { food, grams, kcal } = this.data.newMealItem;
+    const section = this.data.currentMealSection;
+
+    if (!food || !grams || !kcal) {
+      wx.showToast({ title: "请填写完整食物信息", icon: "none" });
+      return;
+    }
+
+    const plans = [...this.data.mealPlans];
+    const currentPlan = plans[this.data.activePlanIndex];
+    if (!currentPlan) return;
+
+    const currentMeals = currentPlan.meals[section];
+    if (!currentMeals) return;
+
+    const newItem = { food, grams, kcal: kcal.endsWith('kcal') ? kcal : kcal + 'kcal' };
+    const nextItems = [...currentMeals.items, newItem];
+    currentPlan.meals = { ...currentPlan.meals, [section]: { ...currentMeals, items: nextItems } };
+
+    // 如果这个计划有关联的后端ID，则同步到后端
+    if (currentPlan.id && !currentPlan.id.startsWith('plan_') && currentPlan.id !== 'empty') {
+      wx.showLoading({ title: "保存中" });
+      try {
+        await request({
+          url: `/plan/${currentPlan.id}`,
+          method: 'PUT',
+          data: {
+            meals: currentPlan.meals
+          }
+        });
+        wx.hideLoading();
+      } catch (err) {
+        wx.hideLoading();
+        wx.showToast({ title: '同步到云端失败', icon: 'none' });
+        // 可以选择在这里 return 阻止本地更新，或者继续让本地更新
+      }
+    }
+
+    this.setData({ 
+      mealPlans: plans,
+      showAddMealItemModal: false,
+      newMealItem: { food: "", grams: "", kcal: "" }
+    }, () => {
+      this.updateDerivedData();
+      wx.showToast({ title: '添加成功', icon: 'success' });
+    });
+  },
+
+  async onRemoveMealItem(event: any) {
     const section = String(event.currentTarget.dataset.section || "");
     const itemIndex = Number(event.currentTarget.dataset.index);
     if (!section || Number.isNaN(itemIndex) || itemIndex < 0) return;
@@ -297,17 +465,84 @@ Page({
     const nextItems = currentMeals.items.filter((_, i) => i !== itemIndex);
     currentPlan.meals = { ...currentPlan.meals, [section]: { ...currentMeals, items: nextItems } };
     
+    // 如果这个计划有关联的后端ID（不是初始化时的 mock 计划），则同步到后端
+    if (currentPlan.id && !currentPlan.id.startsWith('plan_')) {
+      try {
+        await request({
+          url: `/plan/${currentPlan.id}`,
+          method: 'PUT',
+          data: {
+            meals: currentPlan.meals
+          }
+        });
+      } catch (err) {
+        wx.showToast({ title: '同步到云端失败', icon: 'none' });
+      }
+    }
+
     this.setData({ mealPlans: plans }, () => {
       this.updateDerivedData();
     });
   },
 
   onOpenAIDrawer() {
+    if (!this.data.auth.isLoggedIn) {
+      wx.showToast({ title: "请先登录", icon: "none" });
+      return;
+    }
     this.setData({ showAIDrawer: true });
   },
 
   onCloseAIDrawer() {
     this.setData({ showAIDrawer: false });
+  },
+
+  async onGeneratePlan() {
+    this.setData({ isGenerating: true });
+    try {
+      const res = await request({
+        url: '/plan/generate',
+        method: 'POST',
+      });
+      
+      if (res && res.data && res.data.plan) {
+        const generatedPlan = res.data.plan;
+        
+        // 生成的计划保存到后端
+        const saveRes = await request({
+          url: '/plan',
+          method: 'POST',
+          data: {
+            name: generatedPlan.name || 'AI智能方案',
+            meals: generatedPlan.meals,
+            isActive: true
+          }
+        });
+
+        if (saveRes && saveRes.data && saveRes.data.plan) {
+          const savedPlan = saveRes.data.plan;
+          // 追加到计划列表
+          const updatedPlans = [...this.data.mealPlans, savedPlan];
+          
+          this.setData({
+            mealPlans: updatedPlans,
+            activePlanIndex: updatedPlans.length - 1,
+            showAIDrawer: false,
+            isGenerating: false
+          }, () => {
+            this.updateDerivedData();
+            wx.showToast({ title: '生成成功', icon: 'success' });
+          });
+        } else {
+           throw new Error('保存计划失败');
+        }
+      } else {
+        throw new Error('返回格式错误');
+      }
+    } catch (err: any) {
+      wx.showToast({ title: err.message || '生成失败，请重试', icon: 'none' });
+      this.setData({ isGenerating: false });
+    }
   },
 
   onPrevWeek() {

@@ -186,6 +186,7 @@
 
 .plan-tab {
   display: inline-block;
+  flex-shrink: 0;
   padding: 6px 16px;
   font-size: 13px;
   color: @text2;
@@ -203,6 +204,7 @@
 
 .plan-tab-add {
   display: inline-block;
+  flex-shrink: 0;
   padding: 6px 16px;
   font-size: 13px;
   color: @primary;
@@ -333,9 +335,9 @@
 }
 
 .ai-fab {
-  position: absolute;
+  position: fixed;
   right: 16px;
-  bottom: 70px;
+  bottom: 140px;
   width: 52px;
   height: 52px;
   border-radius: 50%;
@@ -344,6 +346,7 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(55, 48, 163, 0.2);
+  z-index: 100;
   .ai-fab-icon {
     font-size: 22px;
   }

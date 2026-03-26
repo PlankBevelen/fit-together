@@ -9,6 +9,9 @@ Page({
       genderIndex: 0,
       birthday: "",
       bio: "",
+      heightCm: "",
+      weightKg: "",
+      targetWeightKg: "",
     },
     genderOptions: ["男", "女", "其他"],
     genderValues: ["male", "female", "other"],
@@ -31,6 +34,9 @@ Page({
         genderIndex,
         birthday: profile?.birthday || "",
         bio: profile?.bio || "",
+        heightCm: profile?.heightCm || "",
+        weightKg: profile?.weightKg || "",
+        targetWeightKg: profile?.targetWeightKg || "",
       },
     });
   },
@@ -66,13 +72,19 @@ Page({
     const bio = String(form.bio || "").trim();
     const birthday = String(form.birthday || "").trim();
     const gender = this.data.genderValues[form.genderIndex] as "male" | "female" | "other";
+    const heightCm = String(form.heightCm || "").trim();
+    const weightKg = String(form.weightKg || "").trim();
+    const targetWeightKg = String(form.targetWeightKg || "").trim();
 
     if (!name) {
       wx.showToast({ title: "请填写昵称", icon: "none" });
       return;
     }
 
-    const payload: Partial<ProfileDraft> = { avatarUrl, name, gender, birthday, bio };
+    const payload: Partial<ProfileDraft> = { 
+      avatarUrl, name, gender, birthday, bio,
+      heightCm, weightKg, targetWeightKg
+    };
 
     if (this.data.isLoggedIn) {
       wx.showLoading({ title: '保存中...' });

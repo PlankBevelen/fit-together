@@ -42,6 +42,27 @@
         <input class="form-input" type="text" value="{{form.bio}}" data-field="bio" bindinput="onFormInput" placeholder="介绍一下你自己吧" />
       </view>
     </view>
+
+    <view class="form-field">
+      <view class="form-label">身高 (cm)</view>
+      <view class="form-input-row">
+        <input class="form-input" type="digit" value="{{form.heightCm}}" data-field="heightCm" bindinput="onFormInput" placeholder="请输入身高" />
+      </view>
+    </view>
+
+    <view class="form-field">
+      <view class="form-label">体重 (kg)</view>
+      <view class="form-input-row">
+        <input class="form-input" type="digit" value="{{form.weightKg}}" data-field="weightKg" bindinput="onFormInput" placeholder="请输入当前体重" />
+      </view>
+    </view>
+
+    <view class="form-field">
+      <view class="form-label">目标体重 (kg)</view>
+      <view class="form-input-row">
+        <input class="form-input" type="digit" value="{{form.targetWeightKg}}" data-field="targetWeightKg" bindinput="onFormInput" placeholder="请输入目标体重" />
+      </view>
+    </view>
   </view>
 
   <view class="form-actions">
