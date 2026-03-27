@@ -1,3 +1,4 @@
+import Formatter from "../../utils/Formatter"
 import { getAuthState } from "../../utils/UserState"
 import { request } from "../../utils/request"
 
@@ -9,6 +10,7 @@ type MealPlan = {
   id: string;
   name: string;
   meals: Meals;
+  isActive?: boolean;
 };
 
 const COLORS = {
@@ -31,16 +33,11 @@ const COLORS = {
 
 const mealPlansInit: MealPlan[] = [];
 
-function parseKcal(value: string) {
-  const n = parseInt(value, 10);
-  return Number.isNaN(n) ? 0 : n;
-}
-
 function buildMealCards(meals: Meals, sections: string[]) {
   const cards = sections.map((section) => {
     const plan = meals[section];
     const items = plan ? plan.items : [];
-    const totalKcal = items.reduce((sum, item) => sum + parseKcal(item.kcal), 0);
+    const totalKcal = items.reduce((sum, item) => sum + Formatter.parseKcal(item.kcal), 0);
     return { section, items, totalKcal };
   });
   const totalKcal = cards.reduce((sum, c) => sum + c.totalKcal, 0);
@@ -49,29 +46,20 @@ function buildMealCards(meals: Meals, sections: string[]) {
 
 function getWeekTitle(weekOffset: number) {
   if (weekOffset === 0) return "本周";
-  if (weekOffset < 0) return "上周";
-  return "下周";
+  if (weekOffset === -1) return "上周";
+  if (weekOffset === 1) return "下周";
+  return `${Math.abs(weekOffset)}周${weekOffset > 0 ? '后' : '前'}`;
 }
 
 function getWeekRange(weekOffset: number) {
-  if (weekOffset === 0) return "3/16–3/22";
-  if (weekOffset === -1) return "3/9–3/15";
-  return "3/23–3/29";
+  const dates = Formatter.getWeekDates(weekOffset);
+  return `${dates[0].displayDate} - ${dates[6].displayDate}`;
 }
 
-const weekDaysBase = [
-  { day: "周一", date: "3/16" },
-  { day: "周二", date: "3/17" },
-  { day: "周三", date: "3/18" },
-  { day: "周四", date: "3/19" },
-  { day: "周五", date: "3/20" },
-  { day: "周六", date: "3/21" },
-  { day: "周日", date: "3/22", isToday: true },
-];
-
-function buildCalendarDays(plansMap: Record<string, string>, mealPlans: MealPlan[]) {
-  return weekDaysBase.map((d) => {
-    const planId = plansMap[d.day] || "";
+function buildCalendarDays(plansMap: Record<string, string>, mealPlans: MealPlan[], weekOffset: number) {
+  const dates = Formatter.getWeekDates(weekOffset);
+  return dates.map((d) => {
+    const planId = plansMap[d.date] || "";
     const planObj = mealPlans.find(p => p.id === planId);
     return {
       ...d,
@@ -81,21 +69,17 @@ function buildCalendarDays(plansMap: Record<string, string>, mealPlans: MealPlan
   });
 }
 
-function buildMonthDays(mealPlans: MealPlan[]) {
-  const days = [];
-  for (let i = 0; i < 42; i++) {
-    const isToday = i === 15;
-    let planName = "";
-    if (isToday) planName = mealPlans[0]?.name || "";
-    else if (i % 5 === 0) planName = mealPlans[1]?.name || "";
-    
-    days.push({
-      day: (i % 30) + 1,
-      isToday,
-      planName
-    });
-  }
-  return days;
+function buildMonthDays(plansMap: Record<string, string>, mealPlans: MealPlan[]) {
+  const dates = Formatter.getMonthDates();
+  return dates.map((d) => {
+    const planId = plansMap[d.date] || "";
+    const planObj = mealPlans.find(p => p.id === planId);
+    return {
+      ...d,
+      planId,
+      planName: planObj ? planObj.name : ""
+    };
+  });
 }
 
 const emptyMeals: Meals = {
@@ -131,12 +115,7 @@ Page({
     calendarWeekOffset: 0,
     calendarWeekTitle: getWeekTitle(0),
     calendarWeekRange: getWeekRange(0),
-    calendarPlans: {
-      周一: "plan_a",
-      周三: "plan_a",
-      周五: "plan_b",
-      周日: "plan_b",
-    } as Record<string, string>,
+    calendarPlans: {} as Record<string, string>,
     calendarDays: [] as any[],
 
     calendarView: "week",
@@ -196,9 +175,10 @@ Page({
       });
       
       if (res && res.data && res.data.plans && res.data.plans.length > 0) {
+        const activeIdx = res.data.plans.findIndex((p: any) => p.isActive);
         this.setData({
           mealPlans: res.data.plans,
-          activePlanIndex: 0,
+          activePlanIndex: activeIdx >= 0 ? activeIdx : 0,
         });
       } else {
         // 如果没有计划，设置为空数组
@@ -208,14 +188,24 @@ Page({
         });
       }
       
-      // 更新营养总结和日历
+      // 更新日历
+      if (res && res.data && res.data.calendar) {
+        this.setData({
+          calendarPlans: res.data.calendar
+        });
+      } else {
+        this.setData({
+          calendarPlans: {},
+        });
+      }
+
+      // 更新营养总结
       this.setData({
         nutritionSummary: [
           { label: "蛋白质", value: "0g", color: "#4ADE80" },
           { label: "碳水", value: "0g", color: COLORS.secondary },
           { label: "脂肪", value: "0g", color: "#FB923C" },
-        ],
-        calendarPlans: {},
+        ]
       });
       
       this.updateDerivedData();
@@ -232,22 +222,65 @@ Page({
     const activeIndex = this.data.activePlanIndex;
     const currentPlan = plans[activeIndex];
     
-    let mealDerived = { cards: [], totalKcal: 0 };
+    let mealDerived: { cards: any[]; totalKcal: number } = { cards: [], totalKcal: 0 };
     if (currentPlan && currentPlan.meals) {
       mealDerived = buildMealCards(currentPlan.meals, this.data.mealSections);
     } else {
       mealDerived = buildMealCards(emptyMeals, this.data.mealSections);
     }
     
-    const calendarDays = buildCalendarDays(this.data.calendarPlans, plans);
-    const calendarMonthDays = buildMonthDays(plans);
+    const calendarDays = buildCalendarDays(this.data.calendarPlans, plans, this.data.calendarWeekOffset);
+    const calendarMonthDays = buildMonthDays(this.data.calendarPlans, plans);
+
+    // 计算当前查看的计划是否是 active 的
+    const isCurrentActive = currentPlan ? !!currentPlan.isActive : false;
 
     this.setData({ 
       mealCards: mealDerived.cards, 
       mealTotalKcal: mealDerived.totalKcal, 
       calendarDays,
-      calendarMonthDays
+      calendarMonthDays,
+      isCurrentActive
     });
+  },
+
+  async onSetActivePlan() {
+    if (!this.data.auth.isLoggedIn) {
+      wx.showToast({ title: "请先登录", icon: "none" });
+      return;
+    }
+    
+    const plans = [...this.data.mealPlans];
+    const currentPlan = plans[this.data.activePlanIndex];
+    if (!currentPlan) return;
+
+    if (currentPlan.id && !currentPlan.id.startsWith('plan_') && currentPlan.id !== 'empty') {
+      wx.showLoading({ title: "设置中" });
+      try {
+        await request({
+          url: `/plan/${currentPlan.id}`,
+          method: 'PUT',
+          data: {
+            isActive: true
+          }
+        });
+        
+        // 更新本地状态
+        plans.forEach(p => p.isActive = false);
+        currentPlan.isActive = true;
+
+        this.setData({ mealPlans: plans }, () => {
+          this.updateDerivedData();
+          wx.hideLoading();
+          wx.showToast({ title: '设置成功', icon: 'success' });
+        });
+      } catch (err: any) {
+        wx.hideLoading();
+        wx.showToast({ title: err.message || '设置失败', icon: 'none' });
+      }
+    } else {
+      wx.showToast({ title: '演示计划无法设置', icon: 'none' });
+    }
   },
 
   onSegmentChange(event: any) {
@@ -551,6 +584,8 @@ Page({
       calendarWeekOffset: nextOffset,
       calendarWeekTitle: getWeekTitle(nextOffset),
       calendarWeekRange: getWeekRange(nextOffset),
+    }, () => {
+      this.updateDerivedData();
     });
   },
 
@@ -560,6 +595,8 @@ Page({
       calendarWeekOffset: nextOffset,
       calendarWeekTitle: getWeekTitle(nextOffset),
       calendarWeekRange: getWeekRange(nextOffset),
+    }, () => {
+      this.updateDerivedData();
     });
   },
 
@@ -590,18 +627,37 @@ Page({
     this.setData({ showPlanPicker: false, pickerDay: "" });
   },
 
-  onSelectPlan(event: any) {
+  async onSelectPlan(event: any) {
     const planId = String(event.currentTarget.dataset.planid || "");
-    const day = this.data.pickerDay;
+    const day = this.data.pickerDay; // This is now 'YYYY-MM-DD'
     if (!day) return;
 
     const calendarPlans = { ...this.data.calendarPlans };
     if (planId) {
       calendarPlans[day] = planId;
     } else {
-      delete calendarPlans[day];
+      // 存入空字符串而不是删除，用于标识显式"清除排餐"
+      calendarPlans[day] = "";
     }
     
+    // Sync to backend
+    wx.showLoading({ title: '保存中' });
+    try {
+      await request({
+        url: '/plan/calendar',
+        method: 'POST',
+        data: {
+          date: day,
+          planId: planId
+        }
+      });
+      wx.hideLoading();
+    } catch (err) {
+      wx.hideLoading();
+      wx.showToast({ title: '保存失败', icon: 'none' });
+      return; // If failed, don't update local state
+    }
+
     this.setData({ calendarPlans, showPlanPicker: false, pickerDay: "", pickerSelectedPlanId: planId }, () => {
       this.updateDerivedData();
     });

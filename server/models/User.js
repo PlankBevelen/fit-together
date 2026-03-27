@@ -26,6 +26,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['cut', 'bulk', 'maintain'],
     },
+    calendar: {
+      type: Map,
+      of: String,
+      default: {},
+    },
   },
   {
     timestamps: true,

@@ -88,4 +88,5 @@ Tab 需要同时维护三处一致性：
 - `app.json` 的 `pages` 与 `tabBar.list` 与 `custom-tab-bar` 三处路由一致
 - 页面 `usingComponents` 声明齐全（navigation-bar、segment-control 等）
 - 样式优先走 less class，减少 WXML 内联 style
+- **通用函数提取**：像 `parseKcal`、日期格式化等跨页面复用的纯函数，必须提取到 `miniprogram/utils/Formatter.ts` 中统一维护，避免在各个 Page 中重复定义。
 

@@ -1,5 +1,6 @@
 import Formatter from "../../utils/Formatter"
 import { getAuthState } from "../../utils/UserState"
+import { request } from "../../utils/request"
 
 Page({
   data: {
@@ -41,8 +42,6 @@ Page({
   onShow() {
     const auth = getAuthState();
     
-    // 如果未登录，使用初始空数据；如果已登录，为了演示可以保留部分 mock 数据或者保持空数据等待接口
-    // 这里根据需求，未登录时为初始态。
     if (!auth.isLoggedIn) {
       this.setData({
         auth,
@@ -55,30 +54,111 @@ Page({
         this.syncDerivedData();
       });
     } else {
-      // 已登录状态，可以显示 mock 数据
-      this.setData({
+      this.setData({ 
         auth,
         today: Formatter.getTodayDate() + " " + Formatter.getTodayDayOfWeek(),
-        planLabel: '今日方案',
-        planValue: '增肌方案A',
-        todayMeals: [
-          { id: 'breakfast', name: '早餐', desc: '全麦面包 · 水煮蛋 · 脱脂牛奶', kcal: 332, protein: 22, carb: 35, fat: 12, checked: true },
-          { id: 'lunch', name: '午餐', desc: '糙米饭 · 鸡胸肉 · 西兰花', kcal: 335, protein: 45, carb: 40, fat: 5, checked: false },
-          { id: 'dinner', name: '晚餐', desc: '红薯 · 三文鱼 · 沙拉', kcal: 356, protein: 30, carb: 45, fat: 15, checked: false },
-          { id: 'snack', name: '加餐', desc: '香蕉 · 乳清蛋白粉', kcal: 209, protein: 25, carb: 25, fat: 2, checked: false }
-        ],
-        activities: [
-          { id: '1', name: '小雨', initial: '小', action: '完成了今日饮食打卡', time: '10分钟前' },
-          { id: '2', name: '阿强', initial: '阿', action: '完成了今日饮食打卡', time: '32分钟前' },
-          { id: '3', name: '建国', initial: '建', action: '更新了本周饮食计划', time: '1小时前' }
-        ]
-      }, () => {
-        this.syncDerivedData();
       });
+      this.fetchTodayPlan();
     }
     
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
+    }
+  },
+
+  async fetchTodayPlan() {
+    try {
+      const res = await request({
+        url: '/plan',
+        method: 'GET',
+      });
+      
+      let activePlan = null;
+      if (res && res.data && res.data.plans && res.data.plans.length > 0) {
+        const todayStr = Formatter.formatYYYYMMDD(new Date());
+
+        // 1. 检查日历中是否为今天显式安排了排餐
+        // 如果有记录，不管是有效 planId 还是空字符串，都代表显式安排
+        if (res.data.calendar && typeof res.data.calendar[todayStr] !== 'undefined') {
+          const planIdToUse = res.data.calendar[todayStr];
+          if (planIdToUse) {
+            activePlan = res.data.plans.find((p: any) => p.id === planIdToUse);
+          } else {
+            // 如果 planIdToUse 为空字符串，说明用户显式选择了"清除排餐"，此时不应该有任何计划
+            activePlan = null;
+          }
+        } else {
+          // 2. 如果今天没有在日历里做任何操作（没记录），使用默认的 isActive 方案
+          activePlan = res.data.plans.find((p: any) => p.isActive) || res.data.plans[0];
+        }
+      }
+
+      if (!activePlan) {
+        this.setData({
+          planLabel: '未排餐',
+          planValue: '--',
+          todayMeals: [],
+        }, () => {
+          this.syncDerivedData();
+        });
+        return;
+      }
+
+      // 解析 plan 数据为 todayMeals 格式
+      const mealsObj = activePlan.meals || {};
+      const mealSections = [
+        { id: 'breakfast', name: '早餐' },
+        { id: 'lunch', name: '午餐' },
+        { id: 'dinner', name: '晚餐' },
+        { id: 'snack', name: '加餐' }
+      ];
+
+      const todayMeals: any[] = [];
+      
+      mealSections.forEach(section => {
+        const mealData = mealsObj[section.name];
+        if (mealData && mealData.items && mealData.items.length > 0) {
+          let totalKcal = 0;
+          const foods: string[] = [];
+          
+          mealData.items.forEach((item: any) => {
+            totalKcal += Formatter.parseKcal(item.kcal);
+            foods.push(item.food);
+          });
+
+          // 估算宏量营养素 (假设 30% 蛋白质，50% 碳水，20% 脂肪)
+          const protein = Math.round((totalKcal * 0.3) / 4);
+          const carb = Math.round((totalKcal * 0.5) / 4);
+          const fat = Math.round((totalKcal * 0.2) / 9);
+
+          todayMeals.push({
+            id: section.id,
+            name: section.name,
+            desc: foods.join(' · '),
+            kcal: totalKcal,
+            protein,
+            carb,
+            fat,
+            checked: false // 暂时将打卡状态设为本地 false
+          });
+        }
+      });
+
+      this.setData({
+        planLabel: '今日方案',
+        planValue: activePlan.name,
+        todayMeals,
+        // 可以保留或者清空 mock 好友动态
+        activities: [
+          { id: '1', name: '小雨', initial: '小', action: '完成了今日饮食打卡', time: '10分钟前' },
+          { id: '2', name: '阿强', initial: '阿', action: '完成了今日饮食打卡', time: '32分钟前' }
+        ]
+      }, () => {
+        this.syncDerivedData();
+      });
+
+    } catch (err) {
+      console.error('Failed to fetch today plan:', err);
     }
   },
 

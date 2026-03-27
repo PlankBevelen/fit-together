@@ -12,6 +12,7 @@ router.route('/')
   .post(planController.savePlan);
 
 router.post('/generate', planController.generatePlan);
+router.post('/calendar', planController.updateCalendar);
 
 router.route('/:id')
   .put(planController.updatePlan)

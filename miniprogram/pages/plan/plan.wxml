@@ -25,10 +25,18 @@
         </view>
       </scroll-view>
 
-      <view class="meal-info" style="justify-content: flex-end; padding: 0 16px 12px;" wx:if="{{mealPlans.length > 0}}">
+      <view class="meal-info" style="justify-content: flex-end; padding: 0 16px 12px; gap: 16px;" wx:if="{{mealPlans.length > 0}}">
+        <view wx:if="{{!isCurrentActive}}" bindtap="onSetActivePlan" style="color: {{colors.primary}}; font-size: 13px; display: flex; align-items: center; gap: 4px; padding: 4px;">
+          <text>✓</text>
+          <text>设为当前方案</text>
+        </view>
+        <view wx:else style="color: {{colors.success}}; font-size: 13px; display: flex; align-items: center; gap: 4px; padding: 4px;">
+          <text>★</text>
+          <text>当前应用方案</text>
+        </view>
         <view bindtap="onDeletePlan" style="color: {{colors.danger}}; font-size: 13px; display: flex; align-items: center; gap: 4px; padding: 4px;">
           <text>🗑</text>
-          <text>删除当前套餐</text>
+          <text>删除</text>
         </view>
       </view>
 
@@ -128,13 +136,13 @@
           <view wx:if="{{auth.isLoggedIn}}" class="calendar-grid">
             <view
               wx:for="{{calendarDays}}"
-              wx:key="day"
+              wx:key="date"
               class="calendar-cell"
               bindtap="onOpenPlanPicker"
-              data-day="{{item.day}}"
+              data-day="{{item.date}}"
               style="border-color: {{item.isToday ? colors.primary : 'transparent'}};"
             >
-              <view class="calendar-day">{{item.day}} {{item.isToday ? '· 今' : ''}}</view>
+              <view class="calendar-day">{{item.day}} {{item.isToday ? '· 今' : ''}} ({{item.displayDate}})</view>
               <view class="calendar-plan {{item.planName ? 'has-plan' : ''}}">{{item.planName || '去排餐 ›'}}</view>
             </view>
           </view>
@@ -153,8 +161,10 @@
             <view class="month-body">
               <view
                 wx:for="{{calendarMonthDays}}"
-                wx:key="index"
+                wx:key="date"
                 class="month-cell"
+                bindtap="onOpenPlanPicker"
+                data-day="{{item.date}}"
               >
                 <view class="month-day {{item.isToday ? 'today' : ''}}" style="background: {{item.isToday ? colors.primary : 'transparent'}}; color: {{item.isToday ? '#fff' : '#111827'}};">{{item.day}}</view>
                 <view wx:if="{{item.planName}}" class="month-plan plan-tag" style="background: {{colors.primaryBg}}; color: {{colors.primary}};">

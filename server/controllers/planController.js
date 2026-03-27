@@ -5,14 +5,45 @@ const Plan = require('../models/Plan');
 exports.getPlans = async (req, res, next) => {
   try {
     const plans = await Plan.find({ user: req.user._id }).sort('-createdAt');
+    const user = await require('../models/User').findById(req.user._id);
+
     res.status(200).json({
       status: 'success',
       data: {
-        plans
+        plans,
+        calendar: user.calendar || {}
       }
     });
   } catch (error) {
     next(new AppError('获取计划列表失败', 500));
+  }
+};
+
+exports.updateCalendar = async (req, res, next) => {
+  try {
+    const { date, planId } = req.body;
+    const user = await require('../models/User').findById(req.user._id);
+    
+    if (!user.calendar) {
+      user.calendar = new Map();
+    }
+
+    if (planId) {
+      user.calendar.set(date, planId);
+    } else {
+      // 当显式清除排餐时，存入空字符串而不是删除该键，这样前端才能区分"未操作"和"显式留空"
+      user.calendar.set(date, "");
+    }
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        calendar: user.calendar
+      }
+    });
+  } catch (error) {
+    next(new AppError('更新日历失败', 500));
   }
 };
 
@@ -45,6 +76,11 @@ exports.savePlan = async (req, res, next) => {
 
 exports.updatePlan = async (req, res, next) => {
   try {
+    if (req.body.isActive) {
+      // 如果设置为 active，则将其他计划设置为 inactive
+      await Plan.updateMany({ user: req.user._id, _id: { $ne: req.params.id } }, { isActive: false });
+    }
+
     const plan = await Plan.findOneAndUpdate(
       { _id: req.params.id, user: req.user._id },
       req.body,
